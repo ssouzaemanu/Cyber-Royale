@@ -1,0 +1,2172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Cyber Royale: Guerra dos Componentes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
+
+  :root {
+    --neon-cyan: #00f5ff;
+    --neon-pink: #ff006e;
+    --neon-green: #39ff14;
+    --neon-yellow: #ffea00;
+    --neon-purple: #bf00ff;
+    --dark-bg: #020818;
+    --panel-bg: rgba(0, 15, 40, 0.92);
+    --card-bg: rgba(0, 30, 60, 0.85);
+    --border-glow: rgba(0, 245, 255, 0.4);
+    --text-primary: #e0f7fa;
+    --text-dim: #546e7a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--dark-bg);
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--text-primary);
+    overflow: hidden;
+    user-select: none;
+  }
+
+  #gameContainer {
+    width: 100vw; height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ===== SCREENS ===== */
+  .screen {
+    position: absolute;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s ease;
+  }
+  .screen.hidden { display: none; }
+
+  /* ===== MENU SCREEN ===== */
+  #menuScreen {
+    background: radial-gradient(ellipse at center, #0a1628 0%, #020818 70%);
+    overflow: hidden;
+  }
+
+  .circuit-bg {
+    position: absolute;
+    width: 100%; height: 100%;
+    opacity: 0.07;
+    background-image:
+      linear-gradient(rgba(0,245,255,0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,255,0.5) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridScroll 20s linear infinite;
+  }
+  @keyframes gridScroll {
+    from { background-position: 0 0; }
+    to { background-position: 40px 40px; }
+  }
+
+  .menu-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: 4px;
+    line-height: 1.2;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 8px;
+    text-shadow: 0 0 30px var(--neon-cyan), 0 0 60px rgba(0,245,255,0.3);
+    color: #fff;
+  }
+  .menu-subtitle {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(10px, 1.5vw, 14px);
+    letter-spacing: 8px;
+    color: var(--neon-cyan);
+    opacity: 0.8;
+    margin-bottom: 50px;
+    position: relative; z-index: 2;
+    text-transform: uppercase;
+  }
+
+  .menu-btn {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(13px, 1.8vw, 16px);
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 14px 44px;
+    margin: 8px;
+    border: 2px solid var(--neon-cyan);
+    background: transparent;
+    color: var(--neon-cyan);
+    cursor: pointer;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 2;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: all 0.2s ease;
+    min-width: 220px;
+  }
+  .menu-btn:hover {
+    background: var(--neon-cyan);
+    color: var(--dark-bg);
+    box-shadow: 0 0 25px var(--neon-cyan), 0 0 50px rgba(0,245,255,0.3);
+    transform: translateY(-2px);
+  }
+  .menu-btn.primary {
+    border-color: var(--neon-pink);
+    color: var(--neon-pink);
+    font-size: clamp(15px, 2.2vw, 20px);
+    padding: 16px 54px;
+  }
+  .menu-btn.primary:hover {
+    background: var(--neon-pink);
+    color: #fff;
+    box-shadow: 0 0 25px var(--neon-pink), 0 0 50px rgba(255,0,110,0.3);
+  }
+
+  .menu-version {
+    position: absolute;
+    bottom: 20px;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    z-index: 2;
+  }
+
+  /* ===== DIFFICULTY SCREEN ===== */
+  #difficultyScreen { background: var(--dark-bg); }
+  .diff-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(18px, 3vw, 28px);
+    letter-spacing: 4px;
+    color: var(--neon-cyan);
+    margin-bottom: 40px;
+    text-shadow: 0 0 20px var(--neon-cyan);
+  }
+  .diff-btn {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(13px, 1.8vw, 16px);
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 18px 50px;
+    margin: 10px;
+    border: 2px solid;
+    background: transparent;
+    cursor: pointer;
+    text-transform: uppercase;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: all 0.2s ease;
+    min-width: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .diff-btn small { font-size: 10px; letter-spacing: 1px; opacity: 0.7; margin-top: 4px; font-family: 'Rajdhani', sans-serif; }
+  .diff-training { border-color: var(--neon-green); color: var(--neon-green); }
+  .diff-training:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 25px var(--neon-green); }
+  .diff-normal { border-color: var(--neon-yellow); color: var(--neon-yellow); }
+  .diff-normal:hover { background: var(--neon-yellow); color: #000; box-shadow: 0 0 25px var(--neon-yellow); }
+  .diff-expert { border-color: var(--neon-pink); color: var(--neon-pink); }
+  .diff-expert:hover { background: var(--neon-pink); color: #fff; box-shadow: 0 0 25px var(--neon-pink); }
+
+  /* ===== OVERLAY SCREENS (rules, credits) ===== */
+  .overlay-screen {
+    position: absolute;
+    width: 100%; height: 100%;
+    background: rgba(2,8,24,0.96);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    z-index: 100;
+    overflow-y: auto;
+    padding: 40px 20px;
+  }
+  .overlay-screen.hidden { display: none; }
+  .overlay-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(18px, 3vw, 26px);
+    color: var(--neon-cyan);
+    letter-spacing: 4px;
+    margin-bottom: 30px;
+    text-shadow: 0 0 15px var(--neon-cyan);
+  }
+  .overlay-content {
+    max-width: 680px;
+    width: 100%;
+    color: var(--text-primary);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+  .overlay-content h3 {
+    font-family: 'Orbitron', monospace;
+    color: var(--neon-pink);
+    font-size: 14px;
+    letter-spacing: 2px;
+    margin: 20px 0 8px;
+  }
+  .overlay-content p { margin-bottom: 10px; opacity: 0.85; }
+  .close-btn {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    padding: 12px 36px;
+    margin-top: 30px;
+    border: 2px solid var(--neon-cyan);
+    background: transparent;
+    color: var(--neon-cyan);
+    cursor: pointer;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: all 0.2s;
+  }
+  .close-btn:hover { background: var(--neon-cyan); color: #000; }
+
+  /* ===== GAME SCREEN ===== */
+  #gameScreen {
+    background: var(--dark-bg);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+  }
+
+  #gameCanvas {
+    width: 100%;
+    flex: 1;
+    display: block;
+    cursor: default;
+  }
+
+  /* ===== BOTTOM HUD ===== */
+  #bottomHUD {
+    background: var(--panel-bg);
+    border-top: 2px solid var(--border-glow);
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  #energyBar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .energy-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    color: var(--neon-cyan);
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  #energyTrack {
+    flex: 1;
+    height: 14px;
+    background: rgba(0,245,255,0.1);
+    border: 1px solid rgba(0,245,255,0.3);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+  #energyFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), #00b4d8);
+    transition: width 0.2s ease;
+    box-shadow: 0 0 10px var(--neon-cyan);
+    position: relative;
+  }
+  #energyFill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: energyShine 1.5s linear infinite;
+  }
+  @keyframes energyShine {
+    from { left: -60%; }
+    to { left: 120%; }
+  }
+  #energyCount {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    color: #fff;
+    min-width: 30px;
+    text-align: right;
+  }
+
+  #cardsRow {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+  #cardsRow::-webkit-scrollbar { height: 3px; }
+  #cardsRow::-webkit-scrollbar-thumb { background: var(--neon-cyan); }
+
+  .card {
+    background: var(--card-bg);
+    border: 1.5px solid rgba(0,245,255,0.25);
+    border-radius: 4px;
+    padding: 5px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+    width: clamp(60px, 9vw, 82px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,245,255,0.05), transparent);
+  }
+  .card:hover:not(.card-disabled) {
+    border-color: var(--neon-cyan);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0,245,255,0.3);
+    z-index: 10;
+  }
+  .card.card-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    filter: grayscale(0.8);
+  }
+  .card-canvas {
+    width: 44px; height: 44px;
+    border-radius: 3px;
+  }
+  .card-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 8px;
+    color: var(--neon-cyan);
+    letter-spacing: 0.5px;
+    margin-top: 3px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+  .card-cost {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--neon-yellow);
+    position: absolute;
+    top: 3px; right: 5px;
+    text-shadow: 0 0 8px var(--neon-yellow);
+  }
+
+  /* ===== TOP TIMER HUD ===== */
+  #topHUD {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    background: rgba(2,8,24,0.85);
+    border-bottom: 1px solid rgba(0,245,255,0.2);
+    z-index: 10;
+    pointer-events: none;
+  }
+  .hud-timer {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(16px, 3vw, 24px);
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 15px var(--neon-cyan);
+    letter-spacing: 2px;
+  }
+  .hud-timer.urgent { color: var(--neon-pink); text-shadow: 0 0 15px var(--neon-pink); animation: pulse 0.5s ease infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+  .hud-score {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    color: var(--neon-cyan);
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  /* ===== QUESTION MODAL ===== */
+  #questionModal {
+    position: absolute;
+    inset: 0;
+    background: rgba(2,8,24,0.92);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+  }
+  #questionModal.hidden { display: none; }
+
+  .question-box {
+    background: linear-gradient(135deg, rgba(0,20,50,0.98), rgba(0,30,60,0.98));
+    border: 2px solid var(--neon-cyan);
+    border-radius: 6px;
+    max-width: 560px;
+    width: 100%;
+    padding: 28px;
+    box-shadow: 0 0 40px rgba(0,245,255,0.2), inset 0 0 40px rgba(0,245,255,0.03);
+    position: relative;
+  }
+  .question-box::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 20px; right: 20px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+  }
+
+  .question-header {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--neon-pink);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .question-card-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    background: rgba(0,245,255,0.05);
+    border: 1px solid rgba(0,245,255,0.15);
+    border-radius: 4px;
+  }
+  .question-card-canvas { width: 40px; height: 40px; border-radius: 3px; }
+  .question-card-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    color: var(--neon-cyan);
+    letter-spacing: 1px;
+  }
+  .question-card-cost {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    color: var(--neon-yellow);
+    margin-left: auto;
+  }
+
+  .question-text {
+    font-size: clamp(14px, 2.2vw, 17px);
+    color: #e0f7fa;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  .answers-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .answer-btn {
+    background: rgba(0,245,255,0.05);
+    border: 1.5px solid rgba(0,245,255,0.2);
+    border-radius: 4px;
+    padding: 12px 14px;
+    cursor: pointer;
+    text-align: left;
+    font-size: clamp(12px, 1.6vw, 14px);
+    color: var(--text-primary);
+    transition: all 0.15s ease;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .answer-btn:hover:not(:disabled) {
+    border-color: var(--neon-cyan);
+    background: rgba(0,245,255,0.12);
+    color: #fff;
+  }
+  .answer-btn .answer-key {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    color: var(--neon-yellow);
+    min-width: 18px;
+  }
+  .answer-btn.correct { border-color: var(--neon-green); background: rgba(57,255,20,0.12); color: var(--neon-green); }
+  .answer-btn.wrong { border-color: var(--neon-pink); background: rgba(255,0,110,0.12); color: var(--neon-pink); }
+  .answer-btn:disabled { cursor: default; }
+
+  .question-feedback {
+    margin-top: 14px;
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-align: center;
+    min-height: 20px;
+  }
+  .question-feedback.correct { color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
+  .question-feedback.wrong { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
+
+  /* ===== END SCREEN ===== */
+  #endScreen {
+    background: radial-gradient(ellipse at center, #0a1628 0%, #020818 70%);
+  }
+  .end-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(30px, 6vw, 56px);
+    font-weight: 900;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+    position: relative; z-index: 2;
+  }
+  .end-title.victory { color: var(--neon-green); text-shadow: 0 0 40px var(--neon-green); }
+  .end-title.defeat { color: var(--neon-pink); text-shadow: 0 0 40px var(--neon-pink); }
+  .end-stats {
+    font-size: clamp(13px, 2vw, 16px);
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    opacity: 0.85;
+    letter-spacing: 1px;
+    position: relative; z-index: 2;
+  }
+  .end-xp {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(14px, 2.2vw, 18px);
+    color: var(--neon-yellow);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    position: relative; z-index: 2;
+    text-shadow: 0 0 15px var(--neon-yellow);
+  }
+  .end-level {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    color: var(--neon-cyan);
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+    position: relative; z-index: 2;
+  }
+
+  /* ===== STATS PANEL ===== */
+  #statsPanel {
+    position: absolute;
+    top: 46px; right: 8px;
+    background: rgba(0,8,20,0.9);
+    border: 1px solid rgba(0,245,255,0.2);
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    color: var(--neon-cyan);
+    letter-spacing: 1px;
+    z-index: 10;
+    line-height: 1.8;
+    pointer-events: none;
+    display: none;
+  }
+
+  /* ===== FLOATING TEXT ===== */
+  .float-text {
+    position: absolute;
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    pointer-events: none;
+    z-index: 50;
+    animation: floatUp 1.2s ease forwards;
+  }
+  @keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-60px) scale(0.8); }
+  }
+
+  /* ===== NOTIFICATION ===== */
+  #notification {
+    position: absolute;
+    top: 60px; left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 10px 24px;
+    background: rgba(0,8,20,0.95);
+    border: 1.5px solid var(--neon-cyan);
+    border-radius: 3px;
+    color: var(--neon-cyan);
+    z-index: 300;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  }
+  #notification.show { opacity: 1; }
+  #notification.err { border-color: var(--neon-pink); color: var(--neon-pink); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 2px; }
+
+  /* Neon scanlines overlay */
+  #gameScreen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+<div id="gameContainer">
+
+  <!-- CIRCUIT BACKGROUND (shared) -->
+  <div class="circuit-bg" id="circuitBg"></div>
+
+  <!-- MENU SCREEN -->
+  <div class="screen" id="menuScreen">
+    <div class="menu-title">CYBER ROYALE</div>
+    <div class="menu-subtitle">Guerra dos Componentes</div>
+    <button class="menu-btn primary" onclick="showDifficulty()">JOGAR</button>
+    <button class="menu-btn" onclick="showRules()">REGRAS</button>
+    <button class="menu-btn" onclick="showCredits()">CREDITOS</button>
+    <button class="menu-btn" onclick="showStats()">ESTATISTICAS</button>
+    <div class="menu-version">v1.0 | Cyber Royale</div>
+  </div>
+
+  <!-- DIFFICULTY SCREEN -->
+  <div class="screen hidden" id="difficultyScreen">
+    <div class="diff-title">SELECIONE A DIFICULDADE</div>
+    <button class="diff-btn diff-training" onclick="startGame('training')">
+      TREINAMENTO
+      <small>IA Facil | Ideal para aprender</small>
+    </button>
+    <button class="diff-btn diff-normal" onclick="startGame('normal')">
+      MODO NORMAL
+      <small>IA Media | Desafio equilibrado</small>
+    </button>
+    <button class="diff-btn diff-expert" onclick="startGame('expert')">
+      ESPECIALISTA
+      <small>IA Dificil | Apenas para experts</small>
+    </button>
+    <button class="menu-btn" style="margin-top:20px" onclick="showScreen('menuScreen')">VOLTAR</button>
+  </div>
+
+  <!-- RULES SCREEN -->
+  <div class="overlay-screen hidden" id="rulesScreen">
+    <div class="overlay-title">REGRAS DO JOGO</div>
+    <div class="overlay-content">
+      <h3>OBJETIVO</h3>
+      <p>Destrua o Servidor Central inimigo antes do tempo acabar. Se o tempo esgotar, vence quem causou mais dano.</p>
+      <h3>ENERGIA COMPUTACIONAL</h3>
+      <p>Voce possui ate 10 unidades de Energia. Ela se regenera automaticamente. Cada carta custa uma quantidade de energia para ser invocada.</p>
+      <h3>SISTEMA EDUCACIONAL</h3>
+      <p>Ao tentar invocar uma carta, uma pergunta sobre Hardware sera apresentada. Se acertar, a tropa e invocada. Se errar, a carta nao e invocada e voce perde 1 ponto de energia.</p>
+      <h3>TORRES</h3>
+      <p>Cada lado possui 1 Servidor Central e 2 Servidores Secundarios. As torres secundarias devem ser destruidas primeiro para abrir caminho ao servidor central.</p>
+      <h3>CARTAS DISPONIVEIS</h3>
+      <p>CPU (4), RAM (2), SSD (3), HD (5), GPU (6), Fonte (4), Cooler (3), Firewall (5), Hacker (4), Virus (3)</p>
+      <h3>VITORIA</h3>
+      <p>Destrua o Servidor Central inimigo OU cause mais dano ao final do tempo (3 minutos).</p>
+    </div>
+    <button class="close-btn" onclick="hideOverlay('rulesScreen')">FECHAR</button>
+  </div>
+
+  <!-- CREDITS SCREEN -->
+  <div class="overlay-screen hidden" id="creditsScreen">
+    <div class="overlay-title">CREDITOS</div>
+    <div class="overlay-content">
+      <h3>CYBER ROYALE: GUERRA DOS COMPONENTES</h3>
+      <p>Um jogo educacional estrategico sobre Hardware e Arquitetura de Computadores.</p>
+      <h3>DESENVOLVIMENTO</h3>
+      <p>Motor de jogo em HTML5 Canvas puro. Interface cyberpunk com CSS animations. Sistema educacional com 50+ perguntas sobre hardware.</p>
+      <h3>COMPONENTES DO JOGO</h3>
+      <p>CPU, RAM, SSD, HD, GPU, Fonte de Alimentacao, Cooler, Firewall, Hacker, Virus.</p>
+      <h3>OBJETIVO EDUCACIONAL</h3>
+      <p>Este jogo foi desenvolvido para ensinar conceitos de Hardware e Arquitetura de Computadores de forma ludica e interativa.</p>
+    </div>
+    <button class="close-btn" onclick="hideOverlay('creditsScreen')">FECHAR</button>
+  </div>
+
+  <!-- STATS SCREEN -->
+  <div class="overlay-screen hidden" id="statsScreen">
+    <div class="overlay-title">ESTATISTICAS</div>
+    <div class="overlay-content" id="statsContent"></div>
+    <button class="close-btn" onclick="hideOverlay('statsScreen')">FECHAR</button>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div class="screen hidden" id="gameScreen" style="position:absolute;flex-direction:column;">
+    <div id="topHUD">
+      <div class="hud-score" id="hudPlayerHP">PLAYER<br><span id="playerHPVal">100%</span></div>
+      <div class="hud-timer" id="hudTimer">3:00</div>
+      <div class="hud-score" id="hudEnemyHP">INIMIGO<br><span id="enemyHPVal">100%</span></div>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+    <div id="bottomHUD">
+      <div id="energyBar">
+        <span class="energy-label">ENERGIA</span>
+        <div id="energyTrack"><div id="energyFill" style="width:100%"></div></div>
+        <span id="energyCount">10/10</span>
+      </div>
+      <div id="cardsRow"></div>
+    </div>
+  </div>
+
+  <!-- QUESTION MODAL -->
+  <div id="questionModal" class="hidden">
+    <div class="question-box">
+      <div class="question-header">VERIFICACAO DE CONHECIMENTO</div>
+      <div class="question-card-info">
+        <canvas class="question-card-canvas" id="qCardCanvas"></canvas>
+        <span class="question-card-name" id="qCardName">CPU</span>
+        <span class="question-card-cost" id="qCardCost">4 EP</span>
+      </div>
+      <div class="question-text" id="questionText"></div>
+      <div class="answers-grid" id="answersGrid"></div>
+      <div class="question-feedback" id="questionFeedback"></div>
+    </div>
+  </div>
+
+  <!-- END SCREEN -->
+  <div class="screen hidden" id="endScreen">
+    <div class="end-title" id="endTitle">VITORIA</div>
+    <div class="end-stats" id="endStats"></div>
+    <div class="end-xp" id="endXP"></div>
+    <div class="end-level" id="endLevel"></div>
+    <button class="menu-btn primary" onclick="showDifficulty()">JOGAR NOVAMENTE</button>
+    <button class="menu-btn" onclick="showScreen('menuScreen')">MENU PRINCIPAL</button>
+  </div>
+
+  <!-- NOTIFICATION -->
+  <div id="notification"></div>
+
+  <!-- STATS PANEL (in game) -->
+  <div id="statsPanel" id="inGameStats"></div>
+
+</div>
+
+<script>
+// ============================================================
+//  CYBER ROYALE: GUERRA DOS COMPONENTES
+//  Full Game Engine
+// ============================================================
+
+// ---------- SCREEN MANAGEMENT ----------
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+function showDifficulty() { showScreen('difficultyScreen'); }
+function showRules() { document.getElementById('rulesScreen').classList.remove('hidden'); }
+function showCredits() { document.getElementById('creditsScreen').classList.remove('hidden'); }
+function hideOverlay(id) { document.getElementById(id).classList.add('hidden'); }
+
+function showStats() {
+  const p = loadProgress();
+  const c = document.getElementById('statsContent');
+  c.innerHTML = `
+    <h3>PERFIL</h3>
+    <p>Nivel: <b style="color:var(--neon-cyan)">${p.level}</b> &nbsp;|&nbsp; XP: <b style="color:var(--neon-yellow)">${p.xp} / ${levelXP(p.level)}</b></p>
+    <h3>PARTIDAS</h3>
+    <p>Jogadas: ${p.played} &nbsp;|&nbsp; Vitorias: <b style="color:var(--neon-green)">${p.wins}</b> &nbsp;|&nbsp; Derrotas: <b style="color:var(--neon-pink)">${p.losses}</b></p>
+    <h3>EDUCACAO</h3>
+    <p>Perguntas: ${p.questions} &nbsp;|&nbsp; Acertos: <b style="color:var(--neon-green)">${p.correct}</b> &nbsp;|&nbsp; Erros: <b style="color:var(--neon-pink)">${p.wrong}</b></p>
+    <p>Taxa de acerto: <b style="color:var(--neon-cyan)">${p.questions > 0 ? Math.round(p.correct/p.questions*100) : 0}%</b></p>
+  `;
+  document.getElementById('statsScreen').classList.remove('hidden');
+}
+
+// ---------- PROGRESS ----------
+function loadProgress() {
+  try {
+    const d = localStorage.getItem('cyberRoyaleProgress');
+    if (d) return JSON.parse(d);
+  } catch(e){}
+  return { level:1, xp:0, played:0, wins:0, losses:0, questions:0, correct:0, wrong:0 };
+}
+function saveProgress(p) {
+  try { localStorage.setItem('cyberRoyaleProgress', JSON.stringify(p)); } catch(e){}
+}
+function levelXP(lv) { return lv * 200; }
+function addXP(amount) {
+  const p = loadProgress();
+  p.xp += amount;
+  while (p.xp >= levelXP(p.level)) { p.xp -= levelXP(p.level); p.level++; }
+  saveProgress(p);
+  return p;
+}
+
+// ---------- NOTIFICATION ----------
+let notifTimer = null;
+function notify(msg, isErr=false) {
+  const n = document.getElementById('notification');
+  n.textContent = msg;
+  n.className = 'show' + (isErr ? ' err' : '');
+  if (notifTimer) clearTimeout(notifTimer);
+  notifTimer = setTimeout(() => n.className = '', 2000);
+}
+
+// ---------- QUESTION BANK (50+ questions) ----------
+const QUESTIONS = [
+  { q:"Qual componente e responsavel por executar calculos e instrucoes do sistema?", opts:["SSD","RAM","CPU","Fonte"], ans:2 },
+  { q:"Qual memoria armazena dados temporariamente enquanto o computador esta ligado?", opts:["HD","RAM","SSD","BIOS"], ans:1 },
+  { q:"Qual componente e responsavel por processar graficos e imagens?", opts:["CPU","Fonte","GPU","Cooler"], ans:2 },
+  { q:"Qual dispositivo armazena dados permanentemente sem partes moveis?", opts:["HD","RAM","SSD","DVD"], ans:2 },
+  { q:"Qual componente converte energia eletrica para alimentar o computador?", opts:["Cooler","Fonte","GPU","Placa-mae"], ans:1 },
+  { q:"Qual componente dissipa o calor gerado pelo processador?", opts:["RAM","Cooler","SSD","Fonte"], ans:1 },
+  { q:"O que significa a sigla CPU?", opts:["Central Processing Unit","Computer Power Unit","Core Processing Unit","Central Program Unit"], ans:0 },
+  { q:"O que significa a sigla RAM?", opts:["Read Access Memory","Random Access Memory","Rapid Array Memory","Read And Memory"], ans:1 },
+  { q:"O que significa a sigla GPU?", opts:["General Processing Unit","Graphics Processing Unit","Global Power Unit","Graphics Power Unit"], ans:1 },
+  { q:"O que significa a sigla SSD?", opts:["Solid State Device","Super Speed Drive","Solid State Drive","Static Storage Disk"], ans:2 },
+  { q:"O que significa a sigla HD?", opts:["Hard Drive","High Density","High Drive","Hard Disk"], ans:3 },
+  { q:"Qual componente conecta todos os outros componentes do computador?", opts:["CPU","RAM","Placa-mae","SSD"], ans:2 },
+  { q:"O que e BIOS em um computador?", opts:["Um software antivirus","Sistema basico de entrada e saida que inicializa o hardware","Um tipo de memoria RAM","Um processador grafico"], ans:1 },
+  { q:"O que e UEFI?", opts:["Um tipo de SSD","Versao moderna do BIOS com interface grafica","Um protocolo de rede","Um tipo de processador"], ans:1 },
+  { q:"Qual e a funcao principal do barramento de dados?", opts:["Armazenar dados","Resfriamento","Transmitir dados entre componentes","Alimentar energia"], ans:2 },
+  { q:"O que e clock em um processador?", opts:["Um software de relogio","Frequencia de operacao medida em Hz","Tipo de memoria cache","Protocolo de rede"], ans:1 },
+  { q:"O que e cache de CPU?", opts:["Memoria temporaria dentro do processador","Tipo de HD","Software de seguranca","Interface de rede"], ans:0 },
+  { q:"Quantos bits possui um byte?", opts:["4","16","8","32"], ans:2 },
+  { q:"O que e um driver?", opts:["Dispositivo de armazenamento","Software que permite comunicacao com hardware","Tipo de processador","Protocolo de rede"], ans:1 },
+  { q:"Qual tecnologia de armazenamento e mais rapida?", opts:["HD tradicional","DVD","SSD NVMe","Disquete"], ans:2 },
+  { q:"O que e dual-channel em memorias RAM?", opts:["Dois pentes de RAM trabalhando em paralelo","Dois processadores","Dois SSDs","Dois monitores"], ans:0 },
+  { q:"O que e overclocking?", opts:["Resfriamento excessivo","Operar componente acima da frequencia padrao","Formatacao do HD","Atualizacao de drivers"], ans:1 },
+  { q:"Qual socket e usado por processadores Intel de ultima geracao?", opts:["AM5","LGA1700","FM2","TR4"], ans:1 },
+  { q:"O que e TDP em processadores?", opts:["Tipo de processador","Potencia de design termico dissipada","Velocidade de transferencia","Tamanho do cache"], ans:1 },
+  { q:"O que significa DDR em memorias RAM?", opts:["Dynamic Data Rate","Double Data Rate","Direct Data Read","Dense Data Register"], ans:1 },
+  { q:"Qual interface e tipicamente usada por SSDs modernos de alta performance?", opts:["SATA","IDE","NVMe","USB"], ans:2 },
+  { q:"O que e RAID em sistemas de armazenamento?", opts:["Um tipo de processador","Arranjo redundante de discos independentes","Software de backup","Protocolo de rede"], ans:1 },
+  { q:"O que e a memoria virtual?", opts:["RAM extra adicionada","Espaco em disco usado como extensao da RAM","Tipo de cache","Memoria de video"], ans:1 },
+  { q:"O que e pipeline em CPUs?", opts:["Canal de resfriamento","Tecnica de execucao paralela de instrucoes","Tipo de barramento","Interface de armazenamento"], ans:1 },
+  { q:"O que e firmware?", opts:["Software de jogos","Software embutido em hardware que controla dispositivos","Tipo de virus","Interface grafica"], ans:1 },
+  { q:"O que e latencia em memorias RAM?", opts:["Velocidade de transferencia","Atraso entre requisicao e fornecimento de dados","Capacidade total","Tensao de operacao"], ans:1 },
+  { q:"Qual componente armazena as configuracoes do BIOS mesmo sem energia?", opts:["RAM","SSD","Bateria CMOS","CPU"], ans:2 },
+  { q:"O que e PCI Express?", opts:["Tipo de memoria","Interface de barramento para placas de expansao","Protocolo de rede","Software de controle"], ans:1 },
+  { q:"O que e memoria ECC?", opts:["Memoria extremamente cara","Memoria com correcao de erros","Tipo de cache","Memoria de video"], ans:1 },
+  { q:"O que e hyper-threading?", opts:["Velocidade extra do processador","Tecnologia que permite um nucleo processar dois threads","Tipo de armazenamento","Protocolo de rede"], ans:1 },
+  { q:"O que significa VRAM?", opts:["Virtual RAM","Video RAM, memoria dedicada para a GPU","Very Rapid Access Memory","Variable Random Access Memory"], ans:1 },
+  { q:"Qual componente e o gargalo mais comum em jogos modernos?", opts:["RAM","CPU","GPU","SSD"], ans:2 },
+  { q:"O que e um processador multinucleo?", opts:["Processador com varios nucleos de processamento","Processador com varios tipos de cache","Processador com varios sockets","Processador com varios barramentos"], ans:0 },
+  { q:"O que e frequencia de memoria RAM?", opts:["Quantidade total de dados","Velocidade medida em MHz","Latencia de acesso","Numero de pinos"], ans:1 },
+  { q:"O que faz o controlador de memoria?", opts:["Resfria a RAM","Gerencia acesso e transferencia de dados na memoria","Formata o HD","Controla a GPU"], ans:1 },
+  { q:"O que e um bus de sistema?", opts:["Software de controle","Via de comunicacao entre componentes","Tipo de armazenamento","Protocolo de internet"], ans:1 },
+  { q:"O que e a interface SATA?", opts:["Tipo de processador","Barramento serial para armazenamento","Tipo de RAM","Protocolo de rede"], ans:1 },
+  { q:"O que e transistor em um processador?", opts:["Tipo de condensador","Componente semicondutor que funciona como chave","Parte mecanica","Tipo de cache"], ans:1 },
+  { q:"O que e fabricacao em nm (nanometros) em CPUs?", opts:["Tamanho fisico do chip","Tamanho dos transistores no processo de fabricacao","Velocidade do clock","Tamanho do cache"], ans:1 },
+  { q:"O que e um chipset na placa-mae?", opts:["Tipo de RAM","Conjunto de chips que gerencia comunicacao entre componentes","Software de controle","Interface de video"], ans:1 },
+  { q:"O que e boot em um computador?", opts:["Tipo de virus","Processo de inicializacao do sistema","Formatacao do disco","Atualizacao de firmware"], ans:1 },
+  { q:"O que e memoria ROM?", opts:["RAM de alta velocidade","Memoria somente leitura","Memoria de video","Tipo de SSD"], ans:1 },
+  { q:"O que e a taxa de transferencia de um HD?", opts:["Numero de particionamentos","Velocidade de leitura/escrita em MB/s","Capacidade total","Numero de setores"], ans:1 },
+  { q:"O que e ponto flutuante (FPU) em processadores?", opts:["Tipo de resfriamento","Unidade para calculos com numeros decimais","Tipo de cache","Protocolo de barramento"], ans:1 },
+  { q:"O que e USB (Universal Serial Bus)?", opts:["Tipo de processador","Interface padrao para conexao de perifericos","Tipo de memoria","Software de controle"], ans:1 },
+  { q:"Qual componente gerencia a comunicacao entre CPU e RAM na placa-mae?", opts:["GPU","Northbridge / Memory Controller","BIOS","Fonte"], ans:1 },
+  { q:"O que e fragmentacao em HDs mecanicos?", opts:["Virus que fragmenta arquivos","Dispersao de arquivos em setores nao contiguos","Tipo de formatacao","Erro de hardware"], ans:1 },
+  { q:"O que faz o processo de desfragmentacao?", opts:["Apaga arquivos desnecessarios","Reorganiza dados dispersos para leitura mais rapida","Atualiza o BIOS","Formata o disco"], ans:1 },
+];
+
+// ---------- CARD DEFINITIONS ----------
+const CARD_DEFS = [
+  { id:'cpu',    name:'CPU',     cost:4, hp:120, dmg:18, speed:1.0, range:55, color:'#00f5ff', special:'none',      desc:'Guerreiro equilibrado' },
+  { id:'ram',    name:'RAM',     cost:2, hp:55,  dmg:10, speed:2.2, range:45, color:'#39ff14', special:'none',      desc:'Rapida, fragil' },
+  { id:'ssd',    name:'SSD',     cost:3, hp:80,  dmg:14, speed:1.7, range:50, color:'#aaff00', special:'none',      desc:'Velocidade alta' },
+  { id:'hd',     name:'HD',     cost:5, hp:220, dmg:24, speed:0.55,range:60, color:'#ff9800', special:'none',      desc:'Resistente, lento' },
+  { id:'gpu',    name:'GPU',     cost:6, hp:160, dmg:30, speed:0.9, range:80, color:'#ff006e', special:'aoe',       desc:'Dano em area' },
+  { id:'fonte',  name:'FONTE',   cost:4, hp:100, dmg:8,  speed:0.8, range:70, color:'#ffea00', special:'heal',      desc:'Cura aliados' },
+  { id:'cooler', name:'COOLER',  cost:3, hp:70,  dmg:8,  speed:0.9, range:75, color:'#80d8ff', special:'buff',      desc:'Acelera aliados' },
+  { id:'firewall',name:'FIREWL', cost:5, hp:280, dmg:20, speed:0.0, range:65, color:'#ff4081', special:'static',    desc:'Defesa estatica' },
+  { id:'hacker', name:'HACKER',  cost:4, hp:90,  dmg:22, speed:1.3, range:55, color:'#ea80fc', special:'pierce',    desc:'Ignora defesas' },
+  { id:'virus',  name:'VIRUS',   cost:3, hp:65,  dmg:12, speed:1.5, range:50, color:'#69f0ae', special:'dot',       desc:'Dano continuo' },
+];
+
+// ---------- GAME STATE ----------
+let G = null; // game state object
+let animFrame = null;
+let lastTime = 0;
+
+// ---------- CANVAS SETUP ----------
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  const gs = document.getElementById('gameScreen');
+  const hud = document.getElementById('bottomHUD');
+  const top = document.getElementById('topHUD');
+  canvas.width = gs.clientWidth;
+  canvas.height = gs.clientHeight - hud.offsetHeight - top.offsetHeight;
+}
+
+// ---------- START GAME ----------
+function startGame(difficulty) {
+  showScreen('gameScreen');
+  document.getElementById('statsPanel').style.display = 'none';
+
+  setTimeout(() => {
+    resizeCanvas();
+    initGame(difficulty);
+  }, 50);
+}
+
+function initGame(difficulty) {
+  const W = canvas.width, H = canvas.height;
+
+  const diffSettings = {
+    training: { aiEnergy:0.4, aiDelay:4500, aiAgro:0.35 },
+    normal:   { aiEnergy:0.65,aiDelay:2800, aiAgro:0.60 },
+    expert:   { aiEnergy:0.9, aiDelay:1600, aiAgro:0.90 },
+  };
+  const ds = diffSettings[difficulty] || diffSettings.normal;
+
+  G = {
+    W, H,
+    difficulty,
+    running: true,
+    timeLeft: 180, // 3 minutes
+    tickAcc: 0,
+    particles: [],
+    floatTexts: [],
+    projectiles: [],
+
+    // Player
+    player: {
+      energy: 10,
+      maxEnergy: 10,
+      energyRegen: 1.0, // per second
+      troops: [],
+    },
+
+    // Enemy AI
+    enemy: {
+      energy: 10,
+      maxEnergy: 10,
+      energyRegen: ds.aiEnergy,
+      troops: [],
+      aiTimer: 0,
+      aiDelay: ds.aiDelay,
+      aiAgro: ds.aiAgro,
+    },
+
+    // Towers
+    playerTowers: [],
+    enemyTowers: [],
+
+    // Input
+    pendingCard: null,
+    questionActive: false,
+
+    // Misc
+    winner: null,
+  };
+
+  buildTowers();
+  buildCards();
+  buildUI();
+
+  if (animFrame) cancelAnimationFrame(animFrame);
+  lastTime = performance.now();
+  animFrame = requestAnimationFrame(gameLoop);
+}
+
+// ---------- TOWERS ----------
+function buildTowers() {
+  const W = G.W, H = G.H;
+  const cx = W / 2;
+  const pad = W * 0.16;
+  const tR = 30;
+
+  // Player towers (bottom)
+  const py = H * 0.88;
+  G.playerTowers = [
+    { x: cx - pad, y: py, r: tR, hp: 500, maxHp: 500, type: 'secondary', side: 'player', alive: true, id: 'pt0', attackTimer: 0, attackRate: 1800 },
+    { x: cx,       y: py - 28, r: 38, hp: 1000, maxHp: 1000, type: 'main', side: 'player', alive: true, id: 'ptM', attackTimer: 0, attackRate: 1500 },
+    { x: cx + pad, y: py, r: tR, hp: 500, maxHp: 500, type: 'secondary', side: 'player', alive: true, id: 'pt1', attackTimer: 0, attackRate: 1800 },
+  ];
+
+  // Enemy towers (top)
+  const ey = H * 0.12;
+  G.enemyTowers = [
+    { x: cx - pad, y: ey, r: tR, hp: 500, maxHp: 500, type: 'secondary', side: 'enemy', alive: true, id: 'et0', attackTimer: 0, attackRate: 1800 },
+    { x: cx,       y: ey + 28, r: 38, hp: 1000, maxHp: 1000, type: 'main', side: 'enemy', alive: true, id: 'etM', attackTimer: 0, attackRate: 1500 },
+    { x: cx + pad, y: ey, r: tR, hp: 500, maxHp: 500, type: 'secondary', side: 'enemy', alive: true, id: 'et1', attackTimer: 0, attackRate: 1800 },
+  ];
+}
+
+// ---------- CARDS UI ----------
+function buildCards() {
+  const row = document.getElementById('cardsRow');
+  row.innerHTML = '';
+  CARD_DEFS.forEach(cd => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.id = 'card_' + cd.id;
+    div.onclick = () => tryPlayCard(cd);
+
+    const cv = document.createElement('canvas');
+    cv.className = 'card-canvas';
+    cv.width = 44; cv.height = 44;
+    drawCardSprite(cv.getContext('2d'), cd, 0, 0, 44, 44);
+
+    const nm = document.createElement('div');
+    nm.className = 'card-name';
+    nm.textContent = cd.name;
+
+    const cs = document.createElement('div');
+    cs.className = 'card-cost';
+    cs.textContent = cd.cost;
+
+    div.appendChild(cv);
+    div.appendChild(nm);
+    div.appendChild(cs);
+    row.appendChild(div);
+  });
+}
+
+// ---------- SPRITE DRAWING ----------
+function drawCardSprite(c, cd, x, y, w, h) {
+  c.clearRect(x, y, w, h);
+  const cx = x + w/2, cy = y + h/2;
+
+  // Background
+  c.save();
+  c.fillStyle = 'rgba(0,10,25,0.9)';
+  c.fillRect(x, y, w, h);
+
+  const col = cd.color;
+  c.strokeStyle = col;
+  c.lineWidth = 1.5;
+  c.globalAlpha = 0.4;
+  c.strokeRect(x+2, y+2, w-4, h-4);
+  c.globalAlpha = 1;
+
+  switch(cd.id) {
+    case 'cpu': drawCPU(c, cx, cy, w*0.42, col); break;
+    case 'ram': drawRAM(c, cx, cy, w*0.42, col); break;
+    case 'ssd': drawSSD(c, cx, cy, w*0.42, col); break;
+    case 'hd':  drawHD(c, cx, cy, w*0.42, col); break;
+    case 'gpu': drawGPU(c, cx, cy, w*0.42, col); break;
+    case 'fonte': drawFonte(c, cx, cy, w*0.42, col); break;
+    case 'cooler': drawCooler(c, cx, cy, w*0.42, col); break;
+    case 'firewall': drawFirewall(c, cx, cy, w*0.42, col); break;
+    case 'hacker': drawHacker(c, cx, cy, w*0.42, col); break;
+    case 'virus': drawVirus(c, cx, cy, w*0.42, col); break;
+  }
+  c.restore();
+}
+
+function drawCPU(c, cx, cy, r, col) {
+  c.fillStyle = col; c.globalAlpha = 0.15;
+  c.fillRect(cx-r, cy-r, r*2, r*2);
+  c.globalAlpha = 1;
+  c.strokeStyle = col; c.lineWidth = 2;
+  c.strokeRect(cx-r, cy-r, r*2, r*2);
+  // Pins
+  for(let i=0;i<4;i++) {
+    c.beginPath(); c.moveTo(cx-r+(r*0.5*i), cy-r-4); c.lineTo(cx-r+(r*0.5*i), cy-r); c.stroke();
+    c.beginPath(); c.moveTo(cx-r+(r*0.5*i), cy+r); c.lineTo(cx-r+(r*0.5*i), cy+r+4); c.stroke();
+  }
+  c.fillStyle = col; c.globalAlpha = 0.8;
+  c.fillRect(cx-r*0.5, cy-r*0.5, r, r);
+  c.globalAlpha = 0.4;
+  c.fillStyle = '#fff';
+  c.fillRect(cx-r*0.2, cy-r*0.2, r*0.4, r*0.4);
+  c.globalAlpha = 1;
+}
+function drawRAM(c, cx, cy, r, col) {
+  c.fillStyle = col; c.globalAlpha = 0.15;
+  c.fillRect(cx-r*1.4, cy-r*0.5, r*2.8, r);
+  c.globalAlpha = 1;
+  c.strokeStyle = col; c.lineWidth = 2;
+  c.strokeRect(cx-r*1.4, cy-r*0.5, r*2.8, r);
+  for(let i=0;i<8;i++) {
+    c.fillStyle = col; c.globalAlpha = 0.7;
+    c.fillRect(cx-r*1.4+(i*r*0.35)+2, cy-r*0.5-4, r*0.2, 4);
+    c.fillRect(cx-r*1.4+(i*r*0.35)+2, cy+r*0.5, r*0.2, 4);
+  }
+  c.globalAlpha = 1;
+  for(let i=0;i<5;i++) {
+    c.fillStyle = col; c.globalAlpha = 0.6;
+    c.fillRect(cx-r+(i*r*0.5), cy-r*0.2, r*0.3, r*0.4);
+  }
+  c.globalAlpha = 1;
+}
+function drawSSD(c, cx, cy, r, col) {
+  c.fillStyle = col; c.globalAlpha = 0.12;
+  c.fillRect(cx-r*1.1, cy-r*0.7, r*2.2, r*1.4);
+  c.globalAlpha = 1;
+  c.strokeStyle = col; c.lineWidth = 2;
+  c.strokeRect(cx-r*1.1, cy-r*0.7, r*2.2, r*1.4);
+  // Flash symbol
+  c.fillStyle = col; c.globalAlpha = 0.9;
+  c.beginPath();
+  c.moveTo(cx+r*0.1, cy-r*0.5);
+  c.lineTo(cx-r*0.15, cy+r*0.05);
+  c.lineTo(cx, cy+r*0.05);
+  c.lineTo(cx-r*0.1, cy+r*0.5);
+  c.lineTo(cx+r*0.15, cy-r*0.05);
+  c.lineTo(cx, cy-r*0.05);
+  c.closePath();
+  c.fill();
+  c.globalAlpha = 1;
+}
+function drawHD(c, cx, cy, r, col) {
+  c.fillStyle = col; c.globalAlpha = 0.12;
+  c.beginPath(); c.arc(cx, cy, r, 0, Math.PI*2); c.fill();
+  c.globalAlpha = 1;
+  c.strokeStyle = col; c.lineWidth = 2;
+  c.beginPath(); c.arc(cx, cy, r, 0, Math.PI*2); c.stroke();
+  c.beginPath(); c.arc(cx, cy, r*0.6, 0, Math.PI*2); c.stroke();
+  c.beginPath(); c.arc(cx, cy, r*0.18, 0, Math.PI*2); c.fill();
+  c.globalAlpha = 0.4;
+  for(let i=0;i<4;i++) {
+    c.beginPath();
+    c.arc(cx, cy, r*0.82, (i*Math.PI*0.5), (i*Math.PI*0.5)+0.35);
+    c.lineWidth = 3; c.strokeStyle = col; c.stroke();
+  }
+  c.globalAlpha = 1; c.lineWidth = 2;
+}
+function drawGPU(c, cx, cy, r, col) {
+  c.fillStyle = col; c.globalAlpha = 0.1;
+  c.fillRect(cx-r*1.3, cy-r*0.8, r*2.6, r*1.6);
+  c.globalAlpha = 1;
+  c.strokeStyle = col; c.lineWidth = 2;
+  c.strokeRect(cx-r*1.3, cy-r*0.8, r*2.6, r*1.6);
+  // Fan
+  c.fillStyle = col; c.globalAlpha = 0.2;
+  c.beginPath(); c.arc(cx-r*0.5, cy, r*0.5, 0, Math.PI*2); c.fill();
+  c.globalAlpha = 1;
+  c.strokeStyle = col;
+  c.beginPath(); c.arc(cx-r*0.5, cy, r*0.5, 0, Math.PI*2); c.stroke();
+  c.beginPath(); c.arc(cx-r*0.5, cy, r*0.15, 0, Math.PI*2); c.fillStyle=col; c.fill();
+  for(let i=0;i<4;i++) {
+    const a = i * Math.PI/2;
+    c.beginPath();
+    c.moveTo(cx-r*0.5, cy);
+    c.lineTo(cx-r*0.5+Math.cos(a)*r*0.5, cy+Math.sin(a)*r*0.5);
+    c.lineWidth = 1.5; c.stroke();
+  }
+  // Memory chips
+  for(let i=0;i<3;i++) {
+    c.fillStyle = col; c.globalAlpha = 0.5;
+    c.fillRect(cx+r*0.2, cy-r*0.5+(i*r*0.4), r*0.4, r*0.28);
+  }
+  c.globalAlpha = 1;
+}
+function drawFonte(c, cx, cy, r, col) {
+  c.fillStyle = col; c.globalAlpha = 0.1;
+  c.fillRect(cx-r, cy-r, r*2, r*2);
+  c.globalAlpha = 1;
+  c.strokeStyle = col; c.lineWidth = 2;
+  c.strokeRect(cx-r, cy-r, r*2, r*2);
+  // Power symbol
+  c.globalAlpha = 0.9;
+  c.beginPath();
+  c.arc(cx, cy+r*0.1, r*0.55, Math.PI*0.2, Math.PI*0.8*2, false);
+  c.lineWidth = 3; c.strokeStyle = col; c.stroke();
+  c.beginPath(); c.moveTo(cx, cy-r*0.6); c.lineTo(cx, cy+r*0.1);
+  c.lineWidth = 3; c.stroke();
+  c.globalAlpha = 1;
+}
+function drawCooler(c, cx, cy, r, col) {
+  c.globalAlpha = 0.15; c.fillStyle = col;
+  c.beginPath(); c.arc(cx, cy, r, 0, Math.PI*2); c.fill();
+  c.globalAlpha = 1;
+  c.strokeStyle = col; c.lineWidth = 2;
+  c.beginPath(); c.arc(cx, cy, r, 0, Math.PI*2); c.stroke();
+  for(let i=0;i<6;i++) {
+    const a = i * Math.PI/3;
+    c.save();
+    c.translate(cx+Math.cos(a)*r*0.5, cy+Math.sin(a)*r*0.5);
+    c.rotate(a + Math.PI/4);
+    c.fillStyle = col; c.globalAlpha = 0.7;
+    c.fillRect(-r*0.18, -r*0.32, r*0.36, r*0.32);
+    c.restore();
+  }
+  c.globalAlpha = 1;
+  c.beginPath(); c.arc(cx, cy, r*0.22, 0, Math.PI*2); c.fillStyle=col; c.fill();
+}
+function drawFirewall(c, cx, cy, r, col) {
+  c.strokeStyle = col; c.lineWidth = 2;
+  // Shield
+  c.beginPath();
+  c.moveTo(cx, cy-r);
+  c.lineTo(cx+r, cy-r*0.4);
+  c.lineTo(cx+r, cy+r*0.3);
+  c.lineTo(cx, cy+r);
+  c.lineTo(cx-r, cy+r*0.3);
+  c.lineTo(cx-r, cy-r*0.4);
+  c.closePath();
+  c.fillStyle = col; c.globalAlpha = 0.15; c.fill();
+  c.globalAlpha = 1; c.stroke();
+  // F
+  c.fillStyle = col; c.font = `bold ${r*0.9}px Orbitron,monospace`;
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.fillText('F', cx, cy+r*0.05);
+}
+function drawHacker(c, cx, cy, r, col) {
+  c.globalAlpha = 0.12; c.fillStyle = col;
+  c.beginPath(); c.arc(cx, cy-r*0.2, r*0.65, 0, Math.PI*2); c.fill();
+  c.globalAlpha = 1;
+  c.strokeStyle = col; c.lineWidth = 2;
+  c.beginPath(); c.arc(cx, cy-r*0.2, r*0.65, 0, Math.PI*2); c.stroke();
+  // Body
+  c.fillStyle = col; c.globalAlpha = 0.7;
+  c.beginPath();
+  c.moveTo(cx-r*0.55, cy+r*0.1);
+  c.quadraticCurveTo(cx-r*0.7, cy+r*0.85, cx-r*0.3, cy+r);
+  c.lineTo(cx+r*0.3, cy+r);
+  c.quadraticCurveTo(cx+r*0.7, cy+r*0.85, cx+r*0.55, cy+r*0.1);
+  c.closePath(); c.fill();
+  c.globalAlpha = 1;
+  // Eyes
+  c.fillStyle = '#00f'; c.globalAlpha = 0.9;
+  c.fillRect(cx-r*0.3, cy-r*0.35, r*0.22, r*0.15);
+  c.fillRect(cx+r*0.08, cy-r*0.35, r*0.22, r*0.15);
+  c.globalAlpha = 1;
+}
+function drawVirus(c, cx, cy, r, col) {
+  c.globalAlpha = 0.15; c.fillStyle = col;
+  c.beginPath(); c.arc(cx, cy, r*0.65, 0, Math.PI*2); c.fill();
+  c.globalAlpha = 1;
+  c.strokeStyle = col; c.lineWidth = 2;
+  c.beginPath(); c.arc(cx, cy, r*0.65, 0, Math.PI*2); c.stroke();
+  for(let i=0;i<8;i++) {
+    const a = i*Math.PI/4;
+    c.beginPath();
+    c.moveTo(cx+Math.cos(a)*r*0.65, cy+Math.sin(a)*r*0.65);
+    c.lineTo(cx+Math.cos(a)*r, cy+Math.sin(a)*r);
+    c.lineWidth = 2; c.strokeStyle = col; c.stroke();
+    c.beginPath();
+    c.arc(cx+Math.cos(a)*r, cy+Math.sin(a)*r, r*0.12, 0, Math.PI*2);
+    c.fillStyle = col; c.fill();
+  }
+}
+
+// ---------- GAME LOOP ----------
+function gameLoop(timestamp) {
+  if (!G || !G.running) return;
+  const dt = Math.min(timestamp - lastTime, 50);
+  lastTime = timestamp;
+
+  update(dt);
+  render();
+
+  if (G.running) animFrame = requestAnimationFrame(gameLoop);
+}
+
+// ---------- UPDATE ----------
+function update(dt) {
+  if (!G.running) return;
+
+  // Timer
+  G.tickAcc += dt;
+  if (G.tickAcc >= 1000) {
+    G.tickAcc -= 1000;
+    G.timeLeft--;
+    updateTimerHUD();
+    if (G.timeLeft <= 0) { endGame(null); return; }
+  }
+
+  // Energy regen
+  const er = G.player.energyRegen * (dt / 1000);
+  G.player.energy = Math.min(G.player.maxEnergy, G.player.energy + er);
+
+  const eer = G.enemy.energyRegen * (dt / 1000);
+  G.enemy.energy = Math.min(G.enemy.maxEnergy, G.enemy.energy + eer);
+
+  updateEnergyHUD();
+
+  // AI
+  updateAI(dt);
+
+  // Troops
+  updateTroops(G.player.troops, G.enemy.troops, G.enemyTowers, 'player', dt);
+  updateTroops(G.enemy.troops, G.player.troops, G.playerTowers, 'enemy', dt);
+
+  // Towers attack troops
+  towerAttack(G.playerTowers, G.enemy.troops, dt);
+  towerAttack(G.enemyTowers, G.player.troops, dt);
+
+  // Projectiles
+  updateProjectiles(dt);
+
+  // Particles
+  G.particles = G.particles.filter(p => { p.life -= dt; return p.life > 0; });
+  G.particles.forEach(p => {
+    p.x += p.vx * dt/1000;
+    p.y += p.vy * dt/1000;
+    p.vy += 60 * dt/1000;
+  });
+
+  // Float texts
+  G.floatTexts = G.floatTexts.filter(f => { f.life -= dt; return f.life > 0; });
+  G.floatTexts.forEach(f => { f.y -= 30 * dt/1000; });
+
+  // Check win
+  const mainEnemy = G.enemyTowers.find(t => t.type==='main');
+  const mainPlayer = G.playerTowers.find(t => t.type==='main');
+  if (mainEnemy && !mainEnemy.alive) { endGame('player'); return; }
+  if (mainPlayer && !mainPlayer.alive) { endGame('enemy'); return; }
+
+  updateHPBars();
+}
+
+// ---------- AI ----------
+function updateAI(dt) {
+  const e = G.enemy;
+  e.aiTimer += dt;
+  if (e.aiTimer < e.aiDelay) return;
+  e.aiTimer = 0;
+
+  if (Math.random() > e.aiAgro) return;
+  if (e.energy < 2) return;
+
+  // Pick affordable card
+  const affordable = CARD_DEFS.filter(cd => cd.cost <= e.energy);
+  if (affordable.length === 0) return;
+
+  const cd = affordable[Math.floor(Math.random() * affordable.length)];
+  e.energy -= cd.cost;
+
+  // Spawn on enemy side (top half), random x within lane
+  const x = G.W * 0.25 + Math.random() * G.W * 0.5;
+  const y = G.H * 0.25 + Math.random() * G.H * 0.1;
+  spawnTroop(cd, x, y, 'enemy');
+}
+
+// ---------- SPAWN TROOP ----------
+function spawnTroop(cd, x, y, side) {
+  const troop = {
+    id: Math.random().toString(36).substr(2,8),
+    def: cd,
+    x, y,
+    side,
+    hp: cd.hp,
+    maxHp: cd.hp,
+    target: null,
+    attackTimer: 0,
+    attackRate: cd.special==='ssd' ? 400 : 900,
+    dotTimer: 0,
+    buffTimer: 0,
+    alive: true,
+    angle: side === 'player' ? -Math.PI/2 : Math.PI/2,
+    shakeTimer: 0,
+  };
+  if (side === 'player') G.player.troops.push(troop);
+  else G.enemy.troops.push(troop);
+  spawnParticles(x, y, cd.color, 8, 'spawn');
+}
+
+// ---------- TROOP UPDATE ----------
+function updateTroops(myTroops, enemyTroops, enemyTowers, side, dt) {
+  const dir = side === 'player' ? -1 : 1;
+
+  for (let i = myTroops.length - 1; i >= 0; i--) {
+    const t = myTroops[i];
+    if (!t.alive) { myTroops.splice(i, 1); continue; }
+
+    if (t.shakeTimer > 0) t.shakeTimer -= dt;
+
+    // DOT
+    if (t.def.special === 'dot' && t.dotTimer <= 0) {
+      // Virus: apply DOT to nearby enemies (this troop itself does dot damage to enemies in range)
+    }
+    if (t.buffTimer > 0) t.buffTimer -= dt;
+
+    // Static troops (firewall) dont move
+    if (t.def.special === 'static') {
+      // Only attack
+      t.attackTimer += dt;
+      const atRate = t.buffTimer > 0 ? t.def.attackRate * 0.6 : 900;
+      if (t.attackTimer >= atRate) {
+        t.attackTimer = 0;
+        const tgt = findNearest(t, enemyTroops, enemyTowers);
+        if (tgt) dealDamage(t, tgt, t.def.dmg, side);
+      }
+      continue;
+    }
+
+    // Find target
+    const nearestTroop = findNearestAlive(t, enemyTroops, t.def.range * 1.2);
+    const nearestTower = findNearestTowerAlive(t, enemyTowers, t.def.range * 1.5);
+
+    let moveTarget = null;
+    if (nearestTroop) {
+      t.target = nearestTroop;
+    } else {
+      // Move toward accessible tower
+      const mainTower = enemyTowers.find(tw => tw.type==='main' && tw.alive);
+      const secTowers = enemyTowers.filter(tw => tw.type==='secondary' && tw.alive);
+      moveTarget = secTowers.length > 0 ? secTowers[Math.floor(Math.random()*secTowers.length)] : mainTower;
+      t.target = moveTarget;
+    }
+
+    // Move
+    if (t.target) {
+      const tx = t.target.x, ty = t.target.y;
+      const dx = tx - t.x, dy = ty - t.y;
+      const dist = Math.sqrt(dx*dx+dy*dy);
+      const spd = t.def.speed * (t.buffTimer > 0 ? 1.4 : 1.0) * 60;
+
+      // Check if in range
+      const engageRange = (t.target.r || 0) + t.def.range;
+      if (dist > engageRange) {
+        t.x += (dx/dist) * spd * dt/1000;
+        t.y += (dy/dist) * spd * dt/1000;
+        t.angle = Math.atan2(dy, dx);
+      }
+
+      // Attack
+      if (dist <= engageRange) {
+        const atRate = t.buffTimer > 0 ? 600 : 900;
+        t.attackTimer += dt;
+        if (t.attackTimer >= atRate) {
+          t.attackTimer = 0;
+          if (t.def.special === 'aoe') {
+            // GPU: AOE damage
+            const targets = [...enemyTroops.filter(e=>e.alive), ...enemyTowers.filter(e=>e.alive)];
+            targets.forEach(en => {
+              const ddx=en.x-t.x, ddy=en.y-t.y;
+              if(Math.sqrt(ddx*ddx+ddy*ddy) < 90) dealDamage(t, en, t.def.dmg, side);
+            });
+            spawnParticles(t.x, t.y, t.def.color, 12, 'aoe');
+          } else if (t.def.special === 'heal') {
+            healNearby(t, side);
+          } else if (t.def.special === 'buff') {
+            buffNearby(t, side);
+          } else {
+            dealDamage(t, t.target, t.def.dmg, side);
+          }
+        }
+      }
+    } else {
+      // Move toward enemy side
+      t.y += dir * t.def.speed * 60 * dt/1000;
+    }
+
+    // DOT: Virus infects nearby enemies
+    if (t.def.special === 'dot') {
+      t.dotTimer -= dt;
+      if (t.dotTimer <= 0) {
+        t.dotTimer = 800;
+        const targets = [...enemyTroops.filter(e=>e.alive), ...enemyTowers.filter(e=>e.alive)];
+        targets.forEach(en => {
+          const ddx=en.x-t.x, ddy=en.y-t.y;
+          if(Math.sqrt(ddx*ddx+ddy*ddy) < 70) {
+            dealDamage(t, en, 6, side);
+            spawnParticles(en.x, en.y, '#69f0ae', 3, 'dot');
+          }
+        });
+      }
+    }
+  }
+}
+
+// ---------- DAMAGE ----------
+function dealDamage(attacker, target, dmg, attackerSide) {
+  if (!target.alive && target.alive !== undefined) return;
+
+  let finalDmg = dmg;
+  // Hacker ignores 40% of effective defense (no real armor system, just flavor)
+  if (attacker && attacker.def.special === 'pierce') finalDmg = Math.ceil(dmg * 1.3);
+
+  target.hp -= finalDmg;
+  if (target.shakeTimer !== undefined) target.shakeTimer = 80;
+
+  spawnParticles(target.x, target.y, '#ff006e', 4, 'hit');
+  addFloatText(target.x, target.y, '-'+finalDmg, '#ff4444');
+
+  // Shoot visual projectile
+  if (attacker) {
+    G.projectiles.push({
+      x: attacker.x, y: attacker.y,
+      tx: target.x, ty: target.y,
+      color: attacker.def ? attacker.def.color : '#fff',
+      life: 200, maxLife: 200,
+    });
+  }
+
+  if (target.hp <= 0) {
+    target.hp = 0;
+    target.alive = false;
+    spawnParticles(target.x, target.y, target.def ? target.def.color : '#fff', 20, 'death');
+    addFloatText(target.x, target.y, 'DESTRUIDO', '#ffea00');
+  }
+}
+
+function healNearby(source, side) {
+  const troops = side === 'player' ? G.player.troops : G.enemy.troops;
+  troops.forEach(t => {
+    if (!t.alive) return;
+    const dx=t.x-source.x, dy=t.y-source.y;
+    if (Math.sqrt(dx*dx+dy*dy) < 100) {
+      t.hp = Math.min(t.maxHp, t.hp + 18);
+      spawnParticles(t.x, t.y, '#ffea00', 4, 'heal');
+      addFloatText(t.x, t.y, '+18', '#39ff14');
+    }
+  });
+}
+
+function buffNearby(source, side) {
+  const troops = side === 'player' ? G.player.troops : G.enemy.troops;
+  troops.forEach(t => {
+    if (!t.alive) return;
+    const dx=t.x-source.x, dy=t.y-source.y;
+    if (Math.sqrt(dx*dx+dy*dy) < 110) {
+      t.buffTimer = 3000;
+      spawnParticles(t.x, t.y, '#80d8ff', 4, 'buff');
+    }
+  });
+}
+
+function findNearestAlive(from, troops, maxDist) {
+  let best = null, bestD = maxDist;
+  for (const t of troops) {
+    if (!t.alive) continue;
+    const dx=t.x-from.x, dy=t.y-from.y;
+    const d = Math.sqrt(dx*dx+dy*dy);
+    if (d < bestD) { bestD=d; best=t; }
+  }
+  return best;
+}
+
+function findNearestTowerAlive(from, towers, maxDist) {
+  let best = null, bestD = maxDist;
+  for (const t of towers) {
+    if (!t.alive) continue;
+    const dx=t.x-from.x, dy=t.y-from.y;
+    const d = Math.sqrt(dx*dx+dy*dy);
+    if (d < bestD) { bestD=d; best=t; }
+  }
+  return best;
+}
+
+function findNearest(from, enemyTroops, enemyTowers) {
+  let best = null, bestD = Infinity;
+  const all = [...enemyTroops.filter(t=>t.alive), ...enemyTowers.filter(t=>t.alive)];
+  for (const t of all) {
+    const dx=t.x-from.x, dy=t.y-from.y;
+    const d = Math.sqrt(dx*dx+dy*dy);
+    if (d < bestD) { bestD=d; best=t; }
+  }
+  return best;
+}
+
+// ---------- TOWER ATTACK ----------
+function towerAttack(towers, enemyTroops, dt) {
+  towers.forEach(tw => {
+    if (!tw.alive) return;
+    tw.attackTimer += dt;
+    if (tw.attackTimer < tw.attackRate) return;
+    tw.attackTimer = 0;
+
+    const range = tw.type==='main' ? 130 : 100;
+    const t = findNearestAlive(tw, enemyTroops, range);
+    if (!t) return;
+    const dmg = tw.type==='main' ? 25 : 18;
+    dealDamage(null, t, dmg, tw.side);
+    G.projectiles.push({
+      x: tw.x, y: tw.y,
+      tx: t.x, ty: t.y,
+      color: tw.side==='player' ? '#00f5ff' : '#ff006e',
+      life: 150, maxLife: 150,
+    });
+  });
+}
+
+// ---------- PROJECTILES ----------
+function updateProjectiles(dt) {
+  G.projectiles = G.projectiles.filter(p => { p.life -= dt; return p.life > 0; });
+}
+
+// ---------- PARTICLES ----------
+function spawnParticles(x, y, color, count, type) {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = type === 'death' ? 80 + Math.random()*80 :
+                  type === 'spawn' ? 50 + Math.random()*50 : 30 + Math.random()*40;
+    G.particles.push({
+      x, y,
+      vx: Math.cos(angle)*speed,
+      vy: Math.sin(angle)*speed - (type==='death'?40:20),
+      color,
+      size: type === 'death' ? 3+Math.random()*3 : 2+Math.random()*2,
+      life: type === 'death' ? 600+Math.random()*400 : 300+Math.random()*200,
+      maxLife: type === 'death' ? 1000 : 500,
+    });
+  }
+}
+
+// ---------- FLOAT TEXTS ----------
+function addFloatText(x, y, text, color) {
+  G.floatTexts.push({ x, y, text, color, life: 900, maxLife: 900 });
+}
+
+// ---------- CARD CLICK ----------
+function tryPlayCard(cd) {
+  if (!G || !G.running || G.questionActive) return;
+  if (G.player.energy < cd.cost) {
+    notify('Energia insuficiente!', true);
+    return;
+  }
+
+  G.questionActive = true;
+  G.pendingCard = cd;
+  showQuestion(cd);
+}
+
+// ---------- QUESTION SYSTEM ----------
+let currentQuestion = null;
+let questionAnswered = false;
+
+function showQuestion(cd) {
+  const modal = document.getElementById('questionModal');
+  modal.classList.remove('hidden');
+  questionAnswered = false;
+
+  // Draw card preview
+  const cv = document.getElementById('qCardCanvas');
+  const c = cv.getContext('2d');
+  drawCardSprite(c, cd, 0, 0, 40, 40);
+  document.getElementById('qCardName').textContent = cd.name;
+  document.getElementById('qCardCost').textContent = cd.cost + ' EP';
+
+  // Pick random question
+  currentQuestion = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+  document.getElementById('questionText').textContent = currentQuestion.q;
+
+  const grid = document.getElementById('answersGrid');
+  grid.innerHTML = '';
+  const keys = ['A','B','C','D'];
+  currentQuestion.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    btn.innerHTML = `<span class="answer-key">${keys[i]})</span>${opt}`;
+    btn.onclick = () => answerQuestion(i, btn);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('questionFeedback').textContent = '';
+  document.getElementById('questionFeedback').className = 'question-feedback';
+}
+
+function answerQuestion(idx, btn) {
+  if (questionAnswered) return;
+  questionAnswered = true;
+
+  const allBtns = document.querySelectorAll('#answersGrid .answer-btn');
+  allBtns.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('questionFeedback');
+  const p = loadProgress();
+  p.questions++;
+
+  if (idx === currentQuestion.ans) {
+    btn.classList.add('correct');
+    allBtns[currentQuestion.ans].classList.add('correct');
+    fb.textContent = 'CORRETO! Tropa invocada!';
+    fb.className = 'question-feedback correct';
+    p.correct++;
+    saveProgress(p);
+
+    // Save card reference BEFORE closeQuestion nullifies G.pendingCard
+    const cardToSpawn = G.pendingCard;
+    setTimeout(() => {
+      closeQuestion();
+      // Spawn troop in center-ish of player side
+      const x = G.W * 0.35 + Math.random() * G.W * 0.3;
+      const y = G.H * 0.6 + Math.random() * G.H * 0.1;
+      G.player.energy -= cardToSpawn.cost;
+      spawnTroop(cardToSpawn, x, y, 'player');
+      notify(cardToSpawn.name + ' invocado!');
+    }, 1000);
+  } else {
+    btn.classList.add('wrong');
+    allBtns[currentQuestion.ans].classList.add('correct');
+    fb.textContent = 'ERRADO! Energia perdida!';
+    fb.className = 'question-feedback wrong';
+    p.wrong++;
+    saveProgress(p);
+
+    setTimeout(() => {
+      closeQuestion();
+      G.player.energy = Math.max(0, G.player.energy - 1);
+      notify('Resposta errada! -1 Energia', true);
+    }, 1200);
+  }
+}
+
+function closeQuestion() {
+  document.getElementById('questionModal').classList.add('hidden');
+  G.questionActive = false;
+  G.pendingCard = null;
+}
+
+// ---------- HUD UPDATES ----------
+function updateTimerHUD() {
+  const el = document.getElementById('hudTimer');
+  const m = Math.floor(G.timeLeft / 60);
+  const s = G.timeLeft % 60;
+  el.textContent = m + ':' + String(s).padStart(2,'0');
+  el.className = 'hud-timer' + (G.timeLeft <= 30 ? ' urgent' : '');
+}
+
+function updateEnergyHUD() {
+  const e = G.player.energy;
+  const pct = (e / G.player.maxEnergy) * 100;
+  document.getElementById('energyFill').style.width = pct + '%';
+  document.getElementById('energyCount').textContent = Math.floor(e) + '/10';
+
+  // Update card availability
+  CARD_DEFS.forEach(cd => {
+    const el = document.getElementById('card_' + cd.id);
+    if (el) el.className = 'card' + (e < cd.cost ? ' card-disabled' : '');
+  });
+}
+
+function updateHPBars() {
+  const playerMain = G.playerTowers.find(t=>t.type==='main');
+  const enemyMain = G.enemyTowers.find(t=>t.type==='main');
+  if (playerMain) {
+    const pct = Math.max(0, Math.round(playerMain.hp/playerMain.maxHp*100));
+    document.getElementById('playerHPVal').textContent = pct + '%';
+  }
+  if (enemyMain) {
+    const pct = Math.max(0, Math.round(enemyMain.hp/enemyMain.maxHp*100));
+    document.getElementById('enemyHPVal').textContent = pct + '%';
+  }
+}
+
+function buildUI() {
+  updateTimerHUD();
+  updateEnergyHUD();
+  updateHPBars();
+}
+
+// ---------- END GAME ----------
+function endGame(winner) {
+  if (!G.running) return;
+  G.running = false;
+  if (animFrame) cancelAnimationFrame(animFrame);
+
+  const p = loadProgress();
+  p.played++;
+
+  let xpGained = 0;
+  let isVictory = false;
+
+  if (winner === null) {
+    // Time up: compare damage
+    const playerMain = G.enemyTowers.find(t=>t.type==='main');
+    const enemyMain = G.playerTowers.find(t=>t.type==='main');
+    const playerDmg = playerMain ? playerMain.maxHp - playerMain.hp : 0;
+    const enemyDmg = enemyMain ? enemyMain.maxHp - enemyMain.hp : 0;
+    if (playerDmg > enemyDmg) { winner = 'player'; }
+    else if (enemyDmg > playerDmg) { winner = 'enemy'; }
+    else { winner = 'draw'; }
+  }
+
+  if (winner === 'player') {
+    isVictory = true;
+    p.wins++;
+    xpGained = G.difficulty==='expert' ? 150 : G.difficulty==='normal' ? 100 : 60;
+  } else {
+    p.losses++;
+    xpGained = 20;
+  }
+  saveProgress(p);
+  const afterXP = addXP(xpGained);
+
+  setTimeout(() => {
+    showScreen('endScreen');
+    const titleEl = document.getElementById('endTitle');
+    titleEl.textContent = winner==='player' ? 'VITORIA' : winner==='draw' ? 'EMPATE' : 'DERROTA';
+    titleEl.className = 'end-title ' + (winner==='player' ? 'victory' : 'defeat');
+    document.getElementById('endStats').textContent = `Partidas: ${afterXP.played} | Vitorias: ${afterXP.wins} | Derrotas: ${afterXP.losses}`;
+    document.getElementById('endXP').textContent = `+${xpGained} XP GANHO`;
+    document.getElementById('endLevel').textContent = `NIVEL ${afterXP.level} | XP: ${afterXP.xp} / ${levelXP(afterXP.level)}`;
+  }, 500);
+}
+
+// ============================================================
+//  RENDER ENGINE
+// ============================================================
+function render() {
+  if (!G) return;
+  const W = G.W, H = G.H;
+  ctx.clearRect(0, 0, W, H);
+
+  drawArena(W, H);
+  drawTowers(G.enemyTowers, '#ff006e');
+  drawTowers(G.playerTowers, '#00f5ff');
+  drawTroops(G.enemy.troops);
+  drawTroops(G.player.troops);
+  drawProjectiles();
+  drawParticles();
+  drawFloatTexts();
+}
+
+function drawArena(W, H) {
+  // Background gradient
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#0a0515');
+  grad.addColorStop(0.5, '#020818');
+  grad.addColorStop(1, '#050a20');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid lines
+  ctx.save();
+  ctx.globalAlpha = 0.04;
+  ctx.strokeStyle = '#00f5ff';
+  ctx.lineWidth = 1;
+  for(let x=0; x<W; x+=40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for(let y=0; y<H; y+=40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+  ctx.restore();
+
+  // Center divider
+  ctx.save();
+  ctx.globalAlpha = 0.3;
+  ctx.strokeStyle = '#00f5ff';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([8,12]);
+  ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Lane lines
+  ctx.globalAlpha = 0.08;
+  ctx.strokeStyle = '#00f5ff';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(W*0.3,0); ctx.lineTo(W*0.3,H); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(W*0.7,0); ctx.lineTo(W*0.7,H); ctx.stroke();
+  ctx.restore();
+
+  // Enemy zone tint
+  ctx.save();
+  ctx.globalAlpha = 0.03;
+  ctx.fillStyle = '#ff006e';
+  ctx.fillRect(0, 0, W, H/2);
+  ctx.globalAlpha = 0.03;
+  ctx.fillStyle = '#00f5ff';
+  ctx.fillRect(0, H/2, W, H/2);
+  ctx.restore();
+
+  // Labels
+  ctx.save();
+  ctx.font = `bold 10px Orbitron, monospace`;
+  ctx.globalAlpha = 0.2;
+  ctx.fillStyle = '#ff006e';
+  ctx.textAlign = 'left';
+  ctx.fillText('ZONA INIMIGA', 8, 20);
+  ctx.fillStyle = '#00f5ff';
+  ctx.fillText('SUA ZONA', 8, H - 8);
+  ctx.restore();
+}
+
+function drawTowers(towers, accentColor) {
+  towers.forEach(tw => {
+    if (!tw.alive) {
+      // Rubble
+      ctx.save();
+      ctx.globalAlpha = 0.3;
+      ctx.fillStyle = '#444';
+      ctx.beginPath(); ctx.arc(tw.x, tw.y, tw.r*0.6, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+      return;
+    }
+
+    const isMain = tw.type === 'main';
+    const col = tw.side === 'player' ? '#00f5ff' : '#ff006e';
+    const hpPct = tw.hp / tw.maxHp;
+
+    // Shake
+    let sx = 0, sy = 0;
+    if (tw.shakeTimer > 0) { sx=(Math.random()-0.5)*4; sy=(Math.random()-0.5)*4; }
+
+    ctx.save();
+    ctx.translate(tw.x + sx, tw.y + sy);
+
+    // Glow
+    ctx.shadowBlur = isMain ? 30 : 18;
+    ctx.shadowColor = col;
+
+    // Body
+    ctx.globalAlpha = 0.15 + (1-hpPct)*0.1;
+    ctx.fillStyle = col;
+    drawHexagon(ctx, 0, 0, tw.r);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = col;
+    ctx.lineWidth = isMain ? 3 : 2;
+    drawHexagon(ctx, 0, 0, tw.r);
+    ctx.stroke();
+
+    // Inner details
+    ctx.strokeStyle = col;
+    ctx.globalAlpha = 0.5;
+    ctx.lineWidth = 1;
+    drawHexagon(ctx, 0, 0, tw.r*0.7);
+    ctx.stroke();
+
+    // Icon
+    ctx.globalAlpha = 0.9;
+    ctx.fillStyle = col;
+    ctx.font = `bold ${isMain ? tw.r*0.7 : tw.r*0.6}px Orbitron, monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(isMain ? 'S' : 's', 0, 0);
+
+    // HP bar
+    ctx.globalAlpha = 1;
+    const bw = tw.r*2.2, bh = 5;
+    const bx = -bw/2, by = tw.r + 5;
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.fillRect(bx, by, bw, bh);
+    ctx.fillStyle = hpPct > 0.5 ? col : hpPct > 0.25 ? '#ffea00' : '#ff006e';
+    ctx.fillRect(bx, by, bw * hpPct, bh);
+    ctx.strokeStyle = col;
+    ctx.globalAlpha = 0.4;
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(bx, by, bw, bh);
+
+    ctx.restore();
+  });
+}
+
+function drawHexagon(c, x, y, r) {
+  c.beginPath();
+  for(let i=0;i<6;i++) {
+    const a = i * Math.PI/3 - Math.PI/6;
+    if(i===0) c.moveTo(x+Math.cos(a)*r, y+Math.sin(a)*r);
+    else c.lineTo(x+Math.cos(a)*r, y+Math.sin(a)*r);
+  }
+  c.closePath();
+}
+
+function drawTroops(troops) {
+  troops.forEach(t => {
+    if (!t.alive) return;
+
+    const cd = t.def;
+    const hpPct = t.hp / t.maxHp;
+    const col = cd.color;
+    const r = 16;
+
+    let sx = 0, sy = 0;
+    if (t.shakeTimer > 0) { sx=(Math.random()-0.5)*3; sy=(Math.random()-0.5)*3; }
+
+    ctx.save();
+    ctx.translate(t.x + sx, t.y + sy);
+
+    // Buff glow
+    if (t.buffTimer > 0) {
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = '#80d8ff';
+    }
+
+    // Body glow
+    ctx.globalAlpha = 0.2;
+    ctx.fillStyle = col;
+    ctx.beginPath(); ctx.arc(0, 0, r+4, 0, Math.PI*2); ctx.fill();
+
+    // Draw sprite
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 8; ctx.shadowColor = col;
+
+    // Mini sprite based on type
+    drawTroopSprite(ctx, t, r);
+
+    // HP bar
+    const bw = r*2.2, bh = 3;
+    ctx.globalAlpha = 0.9;
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(-bw/2, r+3, bw, bh);
+    ctx.fillStyle = hpPct > 0.5 ? '#39ff14' : hpPct > 0.25 ? '#ffea00' : '#ff006e';
+    ctx.fillRect(-bw/2, r+3, bw*hpPct, bh);
+
+    // DOT indicator
+    if (cd.special === 'dot') {
+      ctx.globalAlpha = 0.8;
+      ctx.fillStyle = '#69f0ae';
+      ctx.font = '8px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('~', 0, r+12);
+    }
+
+    ctx.restore();
+  });
+}
+
+function drawTroopSprite(c, t, r) {
+  const col = t.def.color;
+  const side = t.side;
+
+  c.save();
+  // Rotate based on movement direction
+  c.rotate(t.angle + Math.PI/2);
+
+  // Shadow/base circle
+  c.fillStyle = col;
+  c.globalAlpha = 0.25;
+  c.beginPath(); c.arc(0, 0, r, 0, Math.PI*2); c.fill();
+  c.globalAlpha = 1;
+
+  switch(t.def.id) {
+    case 'cpu':
+      c.strokeStyle = col; c.lineWidth = 2;
+      c.strokeRect(-r*0.65, -r*0.65, r*1.3, r*1.3);
+      c.fillStyle = col; c.globalAlpha = 0.8;
+      c.fillRect(-r*0.3, -r*0.3, r*0.6, r*0.6);
+      break;
+    case 'ram':
+      c.fillStyle = col; c.globalAlpha = 0.9;
+      c.fillRect(-r*0.9, -r*0.35, r*1.8, r*0.7);
+      c.globalAlpha = 0.5;
+      c.fillStyle = '#000';
+      for(let i=0;i<5;i++) c.fillRect(-r*0.7+i*r*0.36, -r*0.15, r*0.2, r*0.3);
+      break;
+    case 'ssd':
+      c.fillStyle = col; c.globalAlpha = 0.8;
+      c.fillRect(-r*0.7, -r*0.5, r*1.4, r);
+      c.fillStyle = '#fff'; c.globalAlpha = 0.7;
+      c.font = `bold ${r*0.8}px monospace`; c.textAlign='center'; c.textBaseline='middle';
+      c.fillText('F', 0, r*0.05);
+      break;
+    case 'hd':
+      c.strokeStyle = col; c.lineWidth = 2; c.globalAlpha = 0.9;
+      c.beginPath(); c.arc(0, 0, r*0.75, 0, Math.PI*2); c.stroke();
+      c.fillStyle = col; c.beginPath(); c.arc(0, 0, r*0.2, 0, Math.PI*2); c.fill();
+      break;
+    case 'gpu':
+      c.fillStyle = col; c.globalAlpha = 0.8;
+      c.fillRect(-r*0.85, -r*0.55, r*1.7, r*1.1);
+      c.globalAlpha = 0.5; c.fillStyle='#000';
+      c.beginPath(); c.arc(-r*0.3, 0, r*0.3, 0, Math.PI*2); c.fill();
+      break;
+    case 'fonte':
+      c.strokeStyle = col; c.lineWidth = 2; c.globalAlpha = 0.9;
+      c.strokeRect(-r*0.65, -r*0.65, r*1.3, r*1.3);
+      c.beginPath();
+      c.arc(0, r*0.05, r*0.38, Math.PI*0.2, Math.PI*1.8, false);
+      c.stroke();
+      c.beginPath(); c.moveTo(0, -r*0.45); c.lineTo(0, r*0.05); c.lineWidth=2.5; c.stroke();
+      break;
+    case 'cooler':
+      c.strokeStyle = col; c.lineWidth = 1.5; c.globalAlpha = 0.9;
+      c.beginPath(); c.arc(0,0,r*0.72,0,Math.PI*2); c.stroke();
+      for(let i=0;i<4;i++) {
+        const a = i*Math.PI/2;
+        c.beginPath(); c.moveTo(0,0); c.lineTo(Math.cos(a)*r*0.7, Math.sin(a)*r*0.7); c.stroke();
+      }
+      c.fillStyle=col; c.beginPath(); c.arc(0,0,r*0.2,0,Math.PI*2); c.fill();
+      break;
+    case 'firewall':
+      c.strokeStyle = col; c.lineWidth = 2; c.globalAlpha = 0.9;
+      c.beginPath();
+      c.moveTo(0, -r); c.lineTo(r*0.7,-r*0.3); c.lineTo(r*0.7,r*0.25);
+      c.lineTo(0,r); c.lineTo(-r*0.7,r*0.25); c.lineTo(-r*0.7,-r*0.3); c.closePath(); c.stroke();
+      c.fillStyle=col; c.globalAlpha=0.15; c.fill();
+      c.globalAlpha=0.9; c.fillStyle=col; c.font=`bold ${r*0.7}px Orbitron,monospace`; c.textAlign='center'; c.textBaseline='middle'; c.fillText('F',0,r*0.05);
+      break;
+    case 'hacker':
+      c.strokeStyle = col; c.lineWidth = 1.5; c.globalAlpha = 0.9;
+      c.beginPath(); c.arc(0,-r*0.25,r*0.45,0,Math.PI*2); c.stroke();
+      c.beginPath();
+      c.moveTo(-r*0.4,r*0.1); c.quadraticCurveTo(-r*0.55,r*0.8,-r*0.2,r); c.lineTo(r*0.2,r);
+      c.quadraticCurveTo(r*0.55,r*0.8,r*0.4,r*0.1); c.closePath(); c.stroke();
+      break;
+    case 'virus':
+      c.strokeStyle = col; c.lineWidth = 1.5; c.globalAlpha = 0.9;
+      c.beginPath(); c.arc(0,0,r*0.5,0,Math.PI*2); c.stroke();
+      for(let i=0;i<6;i++) {
+        const a=i*Math.PI/3;
+        c.beginPath(); c.moveTo(Math.cos(a)*r*0.5,Math.sin(a)*r*0.5);
+        c.lineTo(Math.cos(a)*r*0.85,Math.sin(a)*r*0.85); c.stroke();
+        c.beginPath(); c.arc(Math.cos(a)*r*0.85,Math.sin(a)*r*0.85,r*0.1,0,Math.PI*2);
+        c.fillStyle=col; c.fill();
+      }
+      break;
+  }
+  c.restore();
+}
+
+function drawProjectiles() {
+  G.projectiles.forEach(p => {
+    const alpha = p.life / p.maxLife;
+    const progress = 1 - alpha;
+    const x = p.x + (p.tx - p.x) * progress;
+    const y = p.y + (p.ty - p.y) * progress;
+
+    ctx.save();
+    ctx.globalAlpha = alpha * 0.9;
+    ctx.shadowBlur = 6; ctx.shadowColor = p.color;
+    ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI*2); ctx.fill();
+
+    // Trail
+    ctx.globalAlpha = alpha * 0.3;
+    ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(x - (p.tx-p.x)*0.08, y - (p.ty-p.y)*0.08, 2, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  });
+}
+
+function drawParticles() {
+  G.particles.forEach(p => {
+    const alpha = (p.life / p.maxLife) * 0.9;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = p.color;
+    ctx.shadowBlur = 4; ctx.shadowColor = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  });
+}
+
+function drawFloatTexts() {
+  G.floatTexts.forEach(f => {
+    const alpha = f.life / f.maxLife;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = f.color;
+    ctx.shadowBlur = 6; ctx.shadowColor = f.color;
+    ctx.font = `bold 11px Orbitron, monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText(f.text, f.x, f.y);
+    ctx.restore();
+  });
+}
+
+// ---------- WINDOW RESIZE ----------
+window.addEventListener('resize', () => {
+  if (G && G.running) {
+    resizeCanvas();
+    G.W = canvas.width;
+    G.H = canvas.height;
+    buildTowers();
+  }
+});
+
+// ---------- INIT ----------
+showScreen('menuScreen');
+</script>
+</body>
+</html>
