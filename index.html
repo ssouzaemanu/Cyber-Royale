@@ -685,7 +685,7 @@
       <h3>TORRES</h3>
       <p>Cada lado possui 1 Servidor Central e 2 Servidores Secundarios. As torres secundarias devem ser destruidas primeiro para abrir caminho ao servidor central.</p>
       <h3>CARTAS DISPONIVEIS</h3>
-      <p>CPU (4), RAM (2), SSD (3), HD (5), GPU (6), Fonte (4), Cooler (3), Firewall (5), Hacker (4), Virus (3)</p>
+      <p>CPU (4), RAM (2), SSD (3), HD (5), GPU (6), BIOS/UEFI (4), BARRAMENTO (5)</p>
       <h3>VITORIA</h3>
       <p>Destrua o Servidor Central inimigo OU cause mais dano ao final do tempo (3 minutos).</p>
     </div>
@@ -699,9 +699,9 @@
       <h3>CYBER ROYALE: GUERRA DOS COMPONENTES</h3>
       <p>Um jogo educacional estrategico sobre Hardware e Arquitetura de Computadores.</p>
       <h3>DESENVOLVIMENTO</h3>
-      <p>Motor de jogo em HTML5 Canvas puro. Interface cyberpunk com CSS animations. Sistema educacional com 50+ perguntas sobre hardware.</p>
+      <p>Motor de jogo em HTML5 Canvas puro. Interface cyberpunk com CSS animations. Sistema educacional com perguntas sobre hardware relativas às diretrizes pedagógicas.</p>
       <h3>COMPONENTES DO JOGO</h3>
-      <p>CPU, RAM, SSD, HD, GPU, Fonte de Alimentacao, Cooler, Firewall, Hacker, Virus.</p>
+      <p>CPU, RAM, SSD, HD, GPU, BIOS/UEFI e Barramento.</p>
       <h3>OBJETIVO EDUCACIONAL</h3>
       <p>Este jogo foi desenvolvido para ensinar conceitos de Hardware e Arquitetura de Computadores de forma ludica e interativa.</p>
     </div>
@@ -827,79 +827,99 @@ function notify(msg, isErr=false) {
   notifTimer = setTimeout(() => n.className = '', 2000);
 }
 
-// ---------- QUESTION BANK (50+ questions) ----------
-const QUESTIONS = [
-  { q:"Qual componente e responsavel por executar calculos e instrucoes do sistema?", opts:["SSD","RAM","CPU","Fonte"], ans:2 },
-  { q:"Qual memoria armazena dados temporariamente enquanto o computador esta ligado?", opts:["HD","RAM","SSD","BIOS"], ans:1 },
-  { q:"Qual componente e responsavel por processar graficos e imagens?", opts:["CPU","Fonte","GPU","Cooler"], ans:2 },
-  { q:"Qual dispositivo armazena dados permanentemente sem partes moveis?", opts:["HD","RAM","SSD","DVD"], ans:2 },
-  { q:"Qual componente converte energia eletrica para alimentar o computador?", opts:["Cooler","Fonte","GPU","Placa-mae"], ans:1 },
-  { q:"Qual componente dissipa o calor gerado pelo processador?", opts:["RAM","Cooler","SSD","Fonte"], ans:1 },
+// ---------- QUESTION BANK POR CARTA (LMD - Design Pedagogico) ----------
+// LMD-01: CPU - Pratica de Recuperacao (Reconhecer/Recuperar) - Factual
+const QUESTIONS_CPU = [
+  { q:"Qual componente e a unidade responsavel por executar e processar instrucoes do sistema?", opts:["SSD","RAM","CPU","GPU"], ans:2 },
   { q:"O que significa a sigla CPU?", opts:["Central Processing Unit","Computer Power Unit","Core Processing Unit","Central Program Unit"], ans:0 },
-  { q:"O que significa a sigla RAM?", opts:["Read Access Memory","Random Access Memory","Rapid Array Memory","Read And Memory"], ans:1 },
-  { q:"O que significa a sigla GPU?", opts:["General Processing Unit","Graphics Processing Unit","Global Power Unit","Graphics Power Unit"], ans:1 },
-  { q:"O que significa a sigla SSD?", opts:["Solid State Device","Super Speed Drive","Solid State Drive","Static Storage Disk"], ans:2 },
-  { q:"O que significa a sigla HD?", opts:["Hard Drive","High Density","High Drive","Hard Disk"], ans:3 },
-  { q:"Qual componente conecta todos os outros componentes do computador?", opts:["CPU","RAM","Placa-mae","SSD"], ans:2 },
-  { q:"O que e BIOS em um computador?", opts:["Um software antivirus","Sistema basico de entrada e saida que inicializa o hardware","Um tipo de memoria RAM","Um processador grafico"], ans:1 },
-  { q:"O que e UEFI?", opts:["Um tipo de SSD","Versao moderna do BIOS com interface grafica","Um protocolo de rede","Um tipo de processador"], ans:1 },
-  { q:"Qual e a funcao principal do barramento de dados?", opts:["Armazenar dados","Resfriamento","Transmitir dados entre componentes","Alimentar energia"], ans:2 },
-  { q:"O que e clock em um processador?", opts:["Um software de relogio","Frequencia de operacao medida em Hz","Tipo de memoria cache","Protocolo de rede"], ans:1 },
-  { q:"O que e cache de CPU?", opts:["Memoria temporaria dentro do processador","Tipo de HD","Software de seguranca","Interface de rede"], ans:0 },
-  { q:"Quantos bits possui um byte?", opts:["4","16","8","32"], ans:2 },
-  { q:"O que e um driver?", opts:["Dispositivo de armazenamento","Software que permite comunicacao com hardware","Tipo de processador","Protocolo de rede"], ans:1 },
-  { q:"Qual tecnologia de armazenamento e mais rapida?", opts:["HD tradicional","DVD","SSD NVMe","Disquete"], ans:2 },
-  { q:"O que e dual-channel em memorias RAM?", opts:["Dois pentes de RAM trabalhando em paralelo","Dois processadores","Dois SSDs","Dois monitores"], ans:0 },
-  { q:"O que e overclocking?", opts:["Resfriamento excessivo","Operar componente acima da frequencia padrao","Formatacao do HD","Atualizacao de drivers"], ans:1 },
-  { q:"Qual socket e usado por processadores Intel de ultima geracao?", opts:["AM5","LGA1700","FM2","TR4"], ans:1 },
-  { q:"O que e TDP em processadores?", opts:["Tipo de processador","Potencia de design termico dissipada","Velocidade de transferencia","Tamanho do cache"], ans:1 },
-  { q:"O que significa DDR em memorias RAM?", opts:["Dynamic Data Rate","Double Data Rate","Direct Data Read","Dense Data Register"], ans:1 },
-  { q:"Qual interface e tipicamente usada por SSDs modernos de alta performance?", opts:["SATA","IDE","NVMe","USB"], ans:2 },
-  { q:"O que e RAID em sistemas de armazenamento?", opts:["Um tipo de processador","Arranjo redundante de discos independentes","Software de backup","Protocolo de rede"], ans:1 },
-  { q:"O que e a memoria virtual?", opts:["RAM extra adicionada","Espaco em disco usado como extensao da RAM","Tipo de cache","Memoria de video"], ans:1 },
-  { q:"O que e pipeline em CPUs?", opts:["Canal de resfriamento","Tecnica de execucao paralela de instrucoes","Tipo de barramento","Interface de armazenamento"], ans:1 },
-  { q:"O que e firmware?", opts:["Software de jogos","Software embutido em hardware que controla dispositivos","Tipo de virus","Interface grafica"], ans:1 },
-  { q:"O que e latencia em memorias RAM?", opts:["Velocidade de transferencia","Atraso entre requisicao e fornecimento de dados","Capacidade total","Tensao de operacao"], ans:1 },
-  { q:"Qual componente armazena as configuracoes do BIOS mesmo sem energia?", opts:["RAM","SSD","Bateria CMOS","CPU"], ans:2 },
-  { q:"O que e PCI Express?", opts:["Tipo de memoria","Interface de barramento para placas de expansao","Protocolo de rede","Software de controle"], ans:1 },
-  { q:"O que e memoria ECC?", opts:["Memoria extremamente cara","Memoria com correcao de erros","Tipo de cache","Memoria de video"], ans:1 },
-  { q:"O que e hyper-threading?", opts:["Velocidade extra do processador","Tecnologia que permite um nucleo processar dois threads","Tipo de armazenamento","Protocolo de rede"], ans:1 },
-  { q:"O que significa VRAM?", opts:["Virtual RAM","Video RAM, memoria dedicada para a GPU","Very Rapid Access Memory","Variable Random Access Memory"], ans:1 },
-  { q:"Qual componente e o gargalo mais comum em jogos modernos?", opts:["RAM","CPU","GPU","SSD"], ans:2 },
-  { q:"O que e um processador multinucleo?", opts:["Processador com varios nucleos de processamento","Processador com varios tipos de cache","Processador com varios sockets","Processador com varios barramentos"], ans:0 },
-  { q:"O que e frequencia de memoria RAM?", opts:["Quantidade total de dados","Velocidade medida em MHz","Latencia de acesso","Numero de pinos"], ans:1 },
-  { q:"O que faz o controlador de memoria?", opts:["Resfria a RAM","Gerencia acesso e transferencia de dados na memoria","Formata o HD","Controla a GPU"], ans:1 },
-  { q:"O que e um bus de sistema?", opts:["Software de controle","Via de comunicacao entre componentes","Tipo de armazenamento","Protocolo de internet"], ans:1 },
-  { q:"O que e a interface SATA?", opts:["Tipo de processador","Barramento serial para armazenamento","Tipo de RAM","Protocolo de rede"], ans:1 },
-  { q:"O que e transistor em um processador?", opts:["Tipo de condensador","Componente semicondutor que funciona como chave","Parte mecanica","Tipo de cache"], ans:1 },
-  { q:"O que e fabricacao em nm (nanometros) em CPUs?", opts:["Tamanho fisico do chip","Tamanho dos transistores no processo de fabricacao","Velocidade do clock","Tamanho do cache"], ans:1 },
-  { q:"O que e um chipset na placa-mae?", opts:["Tipo de RAM","Conjunto de chips que gerencia comunicacao entre componentes","Software de controle","Interface de video"], ans:1 },
-  { q:"O que e boot em um computador?", opts:["Tipo de virus","Processo de inicializacao do sistema","Formatacao do disco","Atualizacao de firmware"], ans:1 },
-  { q:"O que e memoria ROM?", opts:["RAM de alta velocidade","Memoria somente leitura","Memoria de video","Tipo de SSD"], ans:1 },
-  { q:"O que e a taxa de transferencia de um HD?", opts:["Numero de particionamentos","Velocidade de leitura/escrita em MB/s","Capacidade total","Numero de setores"], ans:1 },
-  { q:"O que e ponto flutuante (FPU) em processadores?", opts:["Tipo de resfriamento","Unidade para calculos com numeros decimais","Tipo de cache","Protocolo de barramento"], ans:1 },
-  { q:"O que e USB (Universal Serial Bus)?", opts:["Tipo de processador","Interface padrao para conexao de perifericos","Tipo de memoria","Software de controle"], ans:1 },
-  { q:"Qual componente gerencia a comunicacao entre CPU e RAM na placa-mae?", opts:["GPU","Northbridge / Memory Controller","BIOS","Fonte"], ans:1 },
-  { q:"O que e fragmentacao em HDs mecanicos?", opts:["Virus que fragmenta arquivos","Dispersao de arquivos em setores nao contiguos","Tipo de formatacao","Erro de hardware"], ans:1 },
-  { q:"O que faz o processo de desfragmentacao?", opts:["Apaga arquivos desnecessarios","Reorganiza dados dispersos para leitura mais rapida","Atualiza o BIOS","Formata o disco"], ans:1 },
+  { q:"Qual componente executa operacoes aritmeticas e logicas no computador?", opts:["RAM","HD","CPU","Barramento"], ans:2 },
+  { q:"Qual componente pode ser chamado de 'cerebro' do computador por processar todas as instrucoes?", opts:["GPU","RAM","SSD","CPU"], ans:3 },
+  { q:"A CPU diferencia-se dos demais componentes pois ela:", opts:["Armazena dados permanentemente","Processa instrucoes e executa calculos","Exibe imagens na tela","Conecta dispositivos externos"], ans:1 },
 ];
 
-// ---------- CARD DEFINITIONS ----------
+// LMD-02: RAM - Exemplos Concretos (Classificar/Diferenciar) - Conceitual
+const QUESTIONS_RAM = [
+  { q:"Cenario: O computador desligou inesperadamente. O que acontece com o documento aberto que estava salvo apenas na RAM?", opts:["E mantido automaticamente na RAM","E transferido para o SSD","E perdido, pois a RAM e volatil","E salvo no BIOS"], ans:2 },
+  { q:"Cenario: Voce esta editando um video e o programa fica lento. Qual componente esta sendo sobrecarregado pela quantidade de dados temporarios em uso?", opts:["SSD","HD","RAM","BIOS"], ans:2 },
+  { q:"Cenario: Ao ligar o computador novamente apos um desligamento, o arquivo que estava aberto sumiu. Isso acontece porque:", opts:["O SSD apagou o arquivo","A RAM perde os dados sem energia — ela e volatil","O HD nao salvou corretamente","O processador limpou a memoria"], ans:1 },
+  { q:"Qual e a diferenca fundamental entre RAM e SSD quanto a persistencia de dados?", opts:["A RAM e mais rapida que o SSD em leitura","A RAM armazena dados temporariamente (volatil); o SSD armazena permanentemente","O SSD e mais caro que a RAM","A RAM possui mais capacidade que o SSD"], ans:1 },
+  { q:"Cenario: Um programa aberto ocupa espaco de memoria. Ao fechar o programa, esse espaco e liberado. Que tipo de memoria faz isso?", opts:["SSD, pois armazena permanentemente","HD, por ter maior capacidade","RAM, pois e temporaria e volatil","BIOS, pois gerencia programas"], ans:2 },
+];
+
+// LMD-03: SSD - Codificacao Dual (Classificar/Diferenciar) - Conceitual
+const QUESTIONS_SSD = [
+  { q:"[SSD vs HD] O componente com chips de memoria flash (sem partes moveis) que armazena dados permanentemente e mais rapido e:", opts:["HD — disco magnetico rotativo","SSD — memoria flash solida","RAM — memoria volatil","BIOS — firmware de inicializacao"], ans:1 },
+  { q:"[SSD vs HD] Qual tecnologia de armazenamento permanente utiliza chips de memoria flash em vez de discos magneticos?", opts:["HD (Hard Disk)","RAM DDR","SSD (Solid State Drive)","Barramento SATA"], ans:2 },
+  { q:"Qual characteristic distingue o SSD do HD como tecnologia de armazenamento permanente?", opts:["O SSD usa discos magneticos giratorios; o HD usa chips flash","O SSD usa chips de memoria flash; o HD usa discos magneticos mecanicos","O SSD armazena dados temporariamente; o HD armazena permanentemente","O SSD e mais lento; o HD e mais rapido"], ans:1 },
+  { q:"[SSD vs HD] O componente de armazenamento permanente resistente a choques fisicos por nao possuir pecas moveis e:", opts:["HD — tem discos que giram","SSD — sem partes moveis","RAM — memoria volatil","Fonte — converte energia"], ans:1 },
+  { q:"Por que o SSD e geralmente mais rapido que o HD para inicializar o sistema operacional?", opts:["O SSD tem mais capacidade de armazenamento","O SSD usa chips flash sem partes moveis; o HD depende de discos mecanicos giratorios","O SSD e maior fisicamente","O SSD consome menos energia"], ans:1 },
+];
+
+// LMD-03b: HD - Codificacao Dual (complementar ao SSD)
+const QUESTIONS_HD = [
+  { q:"[SSD vs HD] O componente de armazenamento permanente que usa discos magneticos giratorios e geralmente mais lento e:", opts:["SSD — chips flash","HD — disco magnetico rotativo","RAM — volatil","UEFI — firmware"], ans:1 },
+  { q:"O HD (Hard Disk) se diferencia do SSD pois:", opts:["O HD usa chips de memoria flash sem partes moveis","O HD usa discos magneticos mecanicos giratorios para armazenar dados","O HD armazena dados temporariamente","O HD e mais rapido que o SSD"], ans:1 },
+  { q:"[SSD vs HD] Qual componente de armazenamento permanente e mais suscetivel a danos por impacto fisico por ter partes moveis?", opts:["SSD","RAM","HD","BIOS"], ans:2 },
+  { q:"Qual e a principal desvantagem do HD em relacao ao SSD como tecnologia de armazenamento?", opts:["Menor capacidade de armazenamento","Maior custo por GB","Velocidade inferior por depender de discos mecanicos","Incompatibilidade com sistemas modernos"], ans:2 },
+  { q:"O HD armazena dados de forma permanente usando:", opts:["Chips de memoria flash","Discos magneticos giratorios e uma cabeca leitora","Transistores de estado solido","Firmware embutido"], ans:1 },
+];
+
+// LMD-04: GPU - Elaboracao / Organizacao Relacional (Classificar/Diferenciar) - Conceitual
+const QUESTIONS_GPU = [
+  { q:"A carta GPU causa dano em AREA (varios alvos simultaneos). Qual caracteristica tecnica real da GPU isso representa?", opts:["Maior capacidade de armazenamento","Processamento grafico paralelo — processa muitos dados ao mesmo tempo","Velocidade superior de clock","Menor consumo de energia"], ans:1 },
+  { q:"Por que a GPU consegue processar graficos de forma mais eficiente que a CPU?", opts:["A GPU tem clock mais alto que a CPU","A GPU e especializada em processamento paralelo — executa muitas operacoes simultaneamente","A GPU possui mais memoria cache","A GPU e fisicamente maior que a CPU"], ans:1 },
+  { q:"A GPU se diferencia da CPU porque enquanto a CPU executa instrucoes sequenciais complexas, a GPU:", opts:["Processa dados de armazenamento permanente","E especializada em processamento grafico paralelo — muitos calculos simultaneos","Controla a inicializacao do sistema","Gerencia a comunicacao entre componentes"], ans:1 },
+  { q:"No jogo, a GPU atinge multiplos inimigos ao mesmo tempo. Isso e uma metafora para:", opts:["A GPU ter maior armazenamento que outros componentes","O processamento paralelo da GPU — executa milhares de calculos graficos simultaneamente","A GPU ser mais barata de fabricar","A GPU consumir menos energia"], ans:1 },
+  { q:"Qual e a especializacao que diferencia a GPU da CPU?", opts:["A GPU e uma versao mais rapida da CPU para instrucoes gerais","A GPU e especializada em processamento grafico paralelo; a CPU e para instrucoes gerais sequenciais","A GPU armazena dados; a CPU processa instrucoes","A GPU gerencia dispositivos de entrada; a CPU processa graficos"], ans:1 },
+];
+
+// LMD-05: BIOS/UEFI - Pratica de Recuperacao (Reconhecer/Recuperar) - Conceitual
+const QUESTIONS_BIOS = [
+  { q:"Qual e o primeiro software executado quando o computador e ligado, antes do sistema operacional?", opts:["Antivirus","Driver de video","BIOS ou UEFI","Navegador de internet"], ans:2 },
+  { q:"O que e o BIOS/UEFI em um computador?", opts:["Um software antivirus instalado pelo usuario","Firmware que inicializa o hardware antes do sistema operacional","Um tipo de memoria RAM de alta velocidade","Um tipo de armazenamento permanente"], ans:1 },
+  { q:"O BIOS e o UEFI sao classificados como:", opts:["Software de usuario instalavel","Sistema operacional alternativo","Firmware — software embutido no hardware responsavel pela inicializacao","Drivers de dispositivo"], ans:2 },
+  { q:"Qual a funcao do BIOS/UEFI na sequencia de inicializacao do computador?", opts:["Exibir o ambiente grafico do sistema operacional","Armazenar arquivos do usuario permanentemente","Verificar e inicializar o hardware antes de carregar o sistema operacional","Processar instrucoes do usuario"], ans:2 },
+  { q:"Qual e a diferenca entre BIOS e UEFI?", opts:["BIOS e mais moderno; UEFI e o sistema antigo","UEFI e a versao moderna do BIOS, com suporte a interface grafica e discos maiores","BIOS inicializa o hardware; UEFI inicializa apenas a memoria RAM","Sao nomes diferentes para o mesmo componente sem diferencas"], ans:1 },
+];
+
+// LMD-06: Barramento - Elaboracao Causal (Inferir/Explicar) - Principiologico
+const QUESTIONS_BARRAMENTO = [
+  { q:"Se o barramento de dados estiver sobrecarregado, o que acontece com a comunicacao entre CPU e RAM?", opts:["A CPU aumenta automaticamente sua velocidade","A comunicacao fica mais lenta — cria um gargalo de desempenho no sistema","O sistema operacional e reiniciado automaticamente","A RAM aumenta sua capacidade temporariamente"], ans:1 },
+  { q:"No jogo, a carta Barramento potencializa outras cartas. Por que isso faz sentido tecnicamente?", opts:["O barramento armazena dados para outras tropas usarem","O barramento e o canal de comunicacao entre componentes — sem ele os outros nao se comunicam eficientemente","O barramento gera energia para os outros componentes","O barramento protege os outros componentes de danos"], ans:1 },
+  { q:"Qual seria a consequencia de um barramento com largura de banda insuficiente em um sistema com CPU e GPU rapidas?", opts:["O sistema funcionaria mais rapido pois usaria menos recursos","O barramento viraria um gargalo — CPU e GPU ficariam ociosas esperando dados","A memoria RAM seria automaticamente expandida","O sistema operacional compensaria com mais threads"], ans:1 },
+  { q:"O barramento de dados funciona como 'rodovias de informacao' no computador. Se essa rodovia ficar congestionada, o que acontece?", opts:["Os dados chegam mais rapido pois ha mais prioridade","O desempenho geral cai — todos os componentes que dependem do barramento sofrem atraso","Apenas a GPU e afetada, pois processa mais dados","O BIOS redireciona os dados automaticamente"], ans:1 },
+  { q:"Por que o barramento e considerado um componente critico para o desempenho do sistema como um todo?", opts:["Porque armazena os dados mais importantes do usuario","Porque e o canal de comunicacao entre todos os componentes — sua sobrecarga afeta todo o sistema","Porque processa as instrucoes mais complexas","Porque inicializa o sistema antes dos outros componentes"], ans:1 },
+];
+
+let QUESTIONS = QUESTIONS_CPU; // Variavel global dinamica exigida pelas funcoes internas
+
+// Funcao para obter perguntas por carta
+function getQuestionsForCard(cardId) {
+  switch(cardId) {
+    case 'cpu':        return QUESTIONS_CPU;
+    case 'ram':        return QUESTIONS_RAM;
+    case 'ssd':        return QUESTIONS_SSD;
+    case 'hd':         return QUESTIONS_HD;
+    case 'gpu':        return QUESTIONS_GPU;
+    case 'bios':       return QUESTIONS_BIOS;
+    case 'barramento': return QUESTIONS_BARRAMENTO;
+    default:           return QUESTIONS_CPU;
+  }
+}
+
+// ---------- CARD DEFINITIONS (6 cartas pedagogicas - LMD-01 a LMD-06) ----------
 const CARD_DEFS = [
-  { id:'cpu',    name:'CPU',     cost:4, hp:120, dmg:18, speed:1.0, range:55, color:'#00f5ff', special:'none',      desc:'Guerreiro equilibrado' },
-  { id:'ram',    name:'RAM',     cost:2, hp:55,  dmg:10, speed:2.2, range:45, color:'#39ff14', special:'none',      desc:'Rapida, fragil' },
-  { id:'ssd',    name:'SSD',     cost:3, hp:80,  dmg:14, speed:1.7, range:50, color:'#aaff00', special:'none',      desc:'Velocidade alta' },
-  { id:'hd',     name:'HD',     cost:5, hp:220, dmg:24, speed:0.55,range:60, color:'#ff9800', special:'none',      desc:'Resistente, lento' },
-  { id:'gpu',    name:'GPU',     cost:6, hp:160, dmg:30, speed:0.9, range:80, color:'#ff006e', special:'aoe',       desc:'Dano em area' },
-  { id:'fonte',  name:'FONTE',   cost:4, hp:100, dmg:8,  speed:0.8, range:70, color:'#ffea00', special:'heal',      desc:'Cura aliados' },
-  { id:'cooler', name:'COOLER',  cost:3, hp:70,  dmg:8,  speed:0.9, range:75, color:'#80d8ff', special:'buff',      desc:'Acelera aliados' },
-  { id:'firewall',name:'FIREWL', cost:5, hp:280, dmg:20, speed:0.0, range:65, color:'#ff4081', special:'static',    desc:'Defesa estatica' },
-  { id:'hacker', name:'HACKER',  cost:4, hp:90,  dmg:22, speed:1.3, range:55, color:'#ea80fc', special:'pierce',    desc:'Ignora defesas' },
-  { id:'virus',  name:'VIRUS',   cost:3, hp:65,  dmg:12, speed:1.5, range:50, color:'#69f0ae', special:'dot',       desc:'Dano continuo' },
+  { id:'cpu',        name:'CPU',       cost:4, hp:120, dmg:18, speed:1.0, range:55, color:'#00f5ff', special:'none',       desc:'Guerreiro equilibrado',    phase:'inicio',  lmd:'LMD-01' },
+  { id:'ram',        name:'RAM',       cost:2, hp:55,  dmg:10, speed:2.2, range:45, color:'#39ff14', special:'none',       desc:'Rapida, fragil',           phase:'inicio',  lmd:'LMD-02' },
+  { id:'ssd',        name:'SSD',       cost:3, hp:80,  dmg:14, speed:1.7, range:50, color:'#aaff00', special:'none',       desc:'Velocidade alta',          phase:'inicio',  lmd:'LMD-03' },
+  { id:'hd',         name:'HD',        cost:5, hp:220, dmg:24, speed:0.55,range:60, color:'#ff9800', special:'none',       desc:'Resistente, lento',        phase:'inicio',  lmd:'LMD-03' },
+  { id:'gpu',        name:'GPU',       cost:6, hp:160, dmg:30, speed:0.9, range:80, color:'#ff006e', special:'aoe',        desc:'Dano em area (paralelo)',   phase:'meio',    lmd:'LMD-04' },
+  { id:'bios',       name:'BIOS/UEFI', cost:4, hp:180, dmg:15, speed:0.7, range:70, color:'#bf00ff', special:'shield',     desc:'Firmware defensivo',       phase:'meio',    lmd:'LMD-05' },
+  { id:'barramento', name:'BARRAM.',   cost:5, hp:100, dmg:12, speed:1.1, range:90, color:'#ffea00', special:'buff',       desc:'Potencializa aliados',     phase:'final',   lmd:'LMD-06' },
 ];
 
 // ---------- GAME STATE ----------
-let G = null; // game state object
+let G = null;
 let animFrame = null;
 let lastTime = 0;
 
@@ -940,21 +960,18 @@ function initGame(difficulty) {
     W, H,
     difficulty,
     running: true,
-    timeLeft: 180, // 3 minutes
+    timeLeft: 180,
     tickAcc: 0,
     particles: [],
     floatTexts: [],
     projectiles: [],
-
-    // Player
+    currentPhase: 'inicio',
     player: {
       energy: 10,
       maxEnergy: 10,
-      energyRegen: 1.0, // per second
+      energyRegen: 1.0,
       troops: [],
     },
-
-    // Enemy AI
     enemy: {
       energy: 10,
       maxEnergy: 10,
@@ -964,16 +981,10 @@ function initGame(difficulty) {
       aiDelay: ds.aiDelay,
       aiAgro: ds.aiAgro,
     },
-
-    // Towers
     playerTowers: [],
     enemyTowers: [],
-
-    // Input
     pendingCard: null,
     questionActive: false,
-
-    // Misc
     winner: null,
   };
 
@@ -993,7 +1004,6 @@ function buildTowers() {
   const pad = W * 0.16;
   const tR = 30;
 
-  // Player towers (bottom)
   const py = H * 0.88;
   G.playerTowers = [
     { x: cx - pad, y: py, r: tR, hp: 500, maxHp: 500, type: 'secondary', side: 'player', alive: true, id: 'pt0', attackTimer: 0, attackRate: 1800 },
@@ -1001,7 +1011,6 @@ function buildTowers() {
     { x: cx + pad, y: py, r: tR, hp: 500, maxHp: 500, type: 'secondary', side: 'player', alive: true, id: 'pt1', attackTimer: 0, attackRate: 1800 },
   ];
 
-  // Enemy towers (top)
   const ey = H * 0.12;
   G.enemyTowers = [
     { x: cx - pad, y: ey, r: tR, hp: 500, maxHp: 500, type: 'secondary', side: 'enemy', alive: true, id: 'et0', attackTimer: 0, attackRate: 1800 },
@@ -1045,7 +1054,6 @@ function drawCardSprite(c, cd, x, y, w, h) {
   c.clearRect(x, y, w, h);
   const cx = x + w/2, cy = y + h/2;
 
-  // Background
   c.save();
   c.fillStyle = 'rgba(0,10,25,0.9)';
   c.fillRect(x, y, w, h);
@@ -1058,16 +1066,13 @@ function drawCardSprite(c, cd, x, y, w, h) {
   c.globalAlpha = 1;
 
   switch(cd.id) {
-    case 'cpu': drawCPU(c, cx, cy, w*0.42, col); break;
-    case 'ram': drawRAM(c, cx, cy, w*0.42, col); break;
-    case 'ssd': drawSSD(c, cx, cy, w*0.42, col); break;
-    case 'hd':  drawHD(c, cx, cy, w*0.42, col); break;
-    case 'gpu': drawGPU(c, cx, cy, w*0.42, col); break;
-    case 'fonte': drawFonte(c, cx, cy, w*0.42, col); break;
-    case 'cooler': drawCooler(c, cx, cy, w*0.42, col); break;
-    case 'firewall': drawFirewall(c, cx, cy, w*0.42, col); break;
-    case 'hacker': drawHacker(c, cx, cy, w*0.42, col); break;
-    case 'virus': drawVirus(c, cx, cy, w*0.42, col); break;
+    case 'cpu':        drawCPU(c, cx, cy, w*0.42, col); break;
+    case 'ram':        drawRAM(c, cx, cy, w*0.42, col); break;
+    case 'ssd':        drawSSD(c, cx, cy, w*0.42, col); break;
+    case 'hd':         drawHD(c, cx, cy, w*0.42, col); break;
+    case 'gpu':        drawGPU(c, cx, cy, w*0.42, col); break;
+    case 'bios':       drawBIOS(c, cx, cy, w*0.42, col); break;
+    case 'barramento': drawBarramento(c, cx, cy, w*0.42, col); break;
   }
   c.restore();
 }
@@ -1078,15 +1083,13 @@ function drawCPU(c, cx, cy, r, col) {
   c.globalAlpha = 1;
   c.strokeStyle = col; c.lineWidth = 2;
   c.strokeRect(cx-r, cy-r, r*2, r*2);
-  // Pins
   for(let i=0;i<4;i++) {
     c.beginPath(); c.moveTo(cx-r+(r*0.5*i), cy-r-4); c.lineTo(cx-r+(r*0.5*i), cy-r); c.stroke();
     c.beginPath(); c.moveTo(cx-r+(r*0.5*i), cy+r); c.lineTo(cx-r+(r*0.5*i), cy+r+4); c.stroke();
   }
   c.fillStyle = col; c.globalAlpha = 0.8;
   c.fillRect(cx-r*0.5, cy-r*0.5, r, r);
-  c.globalAlpha = 0.4;
-  c.fillStyle = '#fff';
+  c.globalAlpha = 0.4; c.fillStyle = '#fff';
   c.fillRect(cx-r*0.2, cy-r*0.2, r*0.4, r*0.4);
   c.globalAlpha = 1;
 }
@@ -1114,31 +1117,22 @@ function drawSSD(c, cx, cy, r, col) {
   c.globalAlpha = 1;
   c.strokeStyle = col; c.lineWidth = 2;
   c.strokeRect(cx-r*1.1, cy-r*0.7, r*2.2, r*1.4);
-  // Flash symbol
   c.fillStyle = col; c.globalAlpha = 0.9;
   c.beginPath();
-  c.moveTo(cx+r*0.1, cy-r*0.5);
-  c.lineTo(cx-r*0.15, cy+r*0.05);
-  c.lineTo(cx, cy+r*0.05);
-  c.lineTo(cx-r*0.1, cy+r*0.5);
-  c.lineTo(cx+r*0.15, cy-r*0.05);
-  c.lineTo(cx, cy-r*0.05);
-  c.closePath();
-  c.fill();
-  c.globalAlpha = 1;
+  c.moveTo(cx+r*0.1, cy-r*0.5); c.lineTo(cx-r*0.15, cy+r*0.05); c.lineTo(cx, cy+r*0.05);
+  c.lineTo(cx-r*0.1, cy+r*0.5); c.lineTo(cx+r*0.15, cy-r*0.05); c.lineTo(cx, cy-r*0.05);
+  c.closePath(); c.fill(); c.globalAlpha = 1;
 }
 function drawHD(c, cx, cy, r, col) {
   c.fillStyle = col; c.globalAlpha = 0.12;
   c.beginPath(); c.arc(cx, cy, r, 0, Math.PI*2); c.fill();
-  c.globalAlpha = 1;
-  c.strokeStyle = col; c.lineWidth = 2;
+  c.globalAlpha = 1; c.strokeStyle = col; c.lineWidth = 2;
   c.beginPath(); c.arc(cx, cy, r, 0, Math.PI*2); c.stroke();
   c.beginPath(); c.arc(cx, cy, r*0.6, 0, Math.PI*2); c.stroke();
   c.beginPath(); c.arc(cx, cy, r*0.18, 0, Math.PI*2); c.fill();
   c.globalAlpha = 0.4;
   for(let i=0;i<4;i++) {
-    c.beginPath();
-    c.arc(cx, cy, r*0.82, (i*Math.PI*0.5), (i*Math.PI*0.5)+0.35);
+    c.beginPath(); c.arc(cx, cy, r*0.82, (i*Math.PI*0.5), (i*Math.PI*0.5)+0.35);
     c.lineWidth = 3; c.strokeStyle = col; c.stroke();
   }
   c.globalAlpha = 1; c.lineWidth = 2;
@@ -1146,117 +1140,41 @@ function drawHD(c, cx, cy, r, col) {
 function drawGPU(c, cx, cy, r, col) {
   c.fillStyle = col; c.globalAlpha = 0.1;
   c.fillRect(cx-r*1.3, cy-r*0.8, r*2.6, r*1.6);
-  c.globalAlpha = 1;
-  c.strokeStyle = col; c.lineWidth = 2;
+  c.globalAlpha = 1; c.strokeStyle = col; c.lineWidth = 2;
   c.strokeRect(cx-r*1.3, cy-r*0.8, r*2.6, r*1.6);
-  // Fan
   c.fillStyle = col; c.globalAlpha = 0.2;
   c.beginPath(); c.arc(cx-r*0.5, cy, r*0.5, 0, Math.PI*2); c.fill();
-  c.globalAlpha = 1;
-  c.strokeStyle = col;
+  c.globalAlpha = 1; c.strokeStyle = col;
   c.beginPath(); c.arc(cx-r*0.5, cy, r*0.5, 0, Math.PI*2); c.stroke();
   c.beginPath(); c.arc(cx-r*0.5, cy, r*0.15, 0, Math.PI*2); c.fillStyle=col; c.fill();
   for(let i=0;i<4;i++) {
     const a = i * Math.PI/2;
-    c.beginPath();
-    c.moveTo(cx-r*0.5, cy);
-    c.lineTo(cx-r*0.5+Math.cos(a)*r*0.5, cy+Math.sin(a)*r*0.5);
+    c.beginPath(); c.moveTo(cx-r*0.5, cy); c.lineTo(cx-r*0.5+Math.cos(a)*r*0.5, cy+Math.sin(a)*r*0.5);
     c.lineWidth = 1.5; c.stroke();
   }
-  // Memory chips
   for(let i=0;i<3;i++) {
     c.fillStyle = col; c.globalAlpha = 0.5;
     c.fillRect(cx+r*0.2, cy-r*0.5+(i*r*0.4), r*0.4, r*0.28);
   }
   c.globalAlpha = 1;
 }
-function drawFonte(c, cx, cy, r, col) {
-  c.fillStyle = col; c.globalAlpha = 0.1;
-  c.fillRect(cx-r, cy-r, r*2, r*2);
-  c.globalAlpha = 1;
+function drawBIOS(c, cx, cy, r, col) {
   c.strokeStyle = col; c.lineWidth = 2;
-  c.strokeRect(cx-r, cy-r, r*2, r*2);
-  // Power symbol
-  c.globalAlpha = 0.9;
   c.beginPath();
-  c.arc(cx, cy+r*0.1, r*0.55, Math.PI*0.2, Math.PI*0.8*2, false);
-  c.lineWidth = 3; c.strokeStyle = col; c.stroke();
-  c.beginPath(); c.moveTo(cx, cy-r*0.6); c.lineTo(cx, cy+r*0.1);
-  c.lineWidth = 3; c.stroke();
-  c.globalAlpha = 1;
-}
-function drawCooler(c, cx, cy, r, col) {
-  c.globalAlpha = 0.15; c.fillStyle = col;
-  c.beginPath(); c.arc(cx, cy, r, 0, Math.PI*2); c.fill();
-  c.globalAlpha = 1;
-  c.strokeStyle = col; c.lineWidth = 2;
-  c.beginPath(); c.arc(cx, cy, r, 0, Math.PI*2); c.stroke();
-  for(let i=0;i<6;i++) {
-    const a = i * Math.PI/3;
-    c.save();
-    c.translate(cx+Math.cos(a)*r*0.5, cy+Math.sin(a)*r*0.5);
-    c.rotate(a + Math.PI/4);
-    c.fillStyle = col; c.globalAlpha = 0.7;
-    c.fillRect(-r*0.18, -r*0.32, r*0.36, r*0.32);
-    c.restore();
-  }
-  c.globalAlpha = 1;
-  c.beginPath(); c.arc(cx, cy, r*0.22, 0, Math.PI*2); c.fillStyle=col; c.fill();
-}
-function drawFirewall(c, cx, cy, r, col) {
-  c.strokeStyle = col; c.lineWidth = 2;
-  // Shield
-  c.beginPath();
-  c.moveTo(cx, cy-r);
-  c.lineTo(cx+r, cy-r*0.4);
-  c.lineTo(cx+r, cy+r*0.3);
-  c.lineTo(cx, cy+r);
-  c.lineTo(cx-r, cy+r*0.3);
-  c.lineTo(cx-r, cy-r*0.4);
-  c.closePath();
-  c.fillStyle = col; c.globalAlpha = 0.15; c.fill();
+  c.moveTo(cx, cy-r); c.lineTo(cx+r, cy-r*0.4); c.lineTo(cx+r, cy+r*0.3);
+  c.lineTo(cx, cy+r); c.lineTo(cx-r, cy+r*0.3); c.lineTo(cx-r, cy-r*0.4);
+  c.closePath(); c.fillStyle = col; c.globalAlpha = 0.15; c.fill();
   c.globalAlpha = 1; c.stroke();
-  // F
-  c.fillStyle = col; c.font = `bold ${r*0.9}px Orbitron,monospace`;
-  c.textAlign = 'center'; c.textBaseline = 'middle';
-  c.fillText('F', cx, cy+r*0.05);
+  c.fillStyle = col; c.font = `bold ${r*0.7}px Orbitron,monospace`;
+  c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('BIO', cx, cy);
 }
-function drawHacker(c, cx, cy, r, col) {
-  c.globalAlpha = 0.12; c.fillStyle = col;
-  c.beginPath(); c.arc(cx, cy-r*0.2, r*0.65, 0, Math.PI*2); c.fill();
-  c.globalAlpha = 1;
-  c.strokeStyle = col; c.lineWidth = 2;
-  c.beginPath(); c.arc(cx, cy-r*0.2, r*0.65, 0, Math.PI*2); c.stroke();
-  // Body
-  c.fillStyle = col; c.globalAlpha = 0.7;
-  c.beginPath();
-  c.moveTo(cx-r*0.55, cy+r*0.1);
-  c.quadraticCurveTo(cx-r*0.7, cy+r*0.85, cx-r*0.3, cy+r);
-  c.lineTo(cx+r*0.3, cy+r);
-  c.quadraticCurveTo(cx+r*0.7, cy+r*0.85, cx+r*0.55, cy+r*0.1);
-  c.closePath(); c.fill();
-  c.globalAlpha = 1;
-  // Eyes
-  c.fillStyle = '#00f'; c.globalAlpha = 0.9;
-  c.fillRect(cx-r*0.3, cy-r*0.35, r*0.22, r*0.15);
-  c.fillRect(cx+r*0.08, cy-r*0.35, r*0.22, r*0.15);
-  c.globalAlpha = 1;
-}
-function drawVirus(c, cx, cy, r, col) {
-  c.globalAlpha = 0.15; c.fillStyle = col;
-  c.beginPath(); c.arc(cx, cy, r*0.65, 0, Math.PI*2); c.fill();
-  c.globalAlpha = 1;
-  c.strokeStyle = col; c.lineWidth = 2;
-  c.beginPath(); c.arc(cx, cy, r*0.65, 0, Math.PI*2); c.stroke();
-  for(let i=0;i<8;i++) {
-    const a = i*Math.PI/4;
-    c.beginPath();
-    c.moveTo(cx+Math.cos(a)*r*0.65, cy+Math.sin(a)*r*0.65);
-    c.lineTo(cx+Math.cos(a)*r, cy+Math.sin(a)*r);
-    c.lineWidth = 2; c.strokeStyle = col; c.stroke();
-    c.beginPath();
-    c.arc(cx+Math.cos(a)*r, cy+Math.sin(a)*r, r*0.12, 0, Math.PI*2);
-    c.fillStyle = col; c.fill();
+function drawBarramento(c, cx, cy, r, col) {
+  c.strokeStyle = col; c.lineWidth = 3;
+  c.beginPath(); c.moveTo(cx-r, cy-r*0.3); c.lineTo(cx+r, cy-r*0.3); c.stroke();
+  c.beginPath(); c.moveTo(cx-r, cy+r*0.3); c.lineTo(cx+r, cy+r*0.3); c.stroke();
+  c.fillStyle = col;
+  for(let i=0; i<4; i++) {
+    c.fillRect(cx-r+4+(i*r*0.5), cy-r*0.5, 4, r);
   }
 }
 
@@ -1276,7 +1194,6 @@ function gameLoop(timestamp) {
 function update(dt) {
   if (!G.running) return;
 
-  // Timer
   G.tickAcc += dt;
   if (G.tickAcc >= 1000) {
     G.tickAcc -= 1000;
@@ -1285,7 +1202,6 @@ function update(dt) {
     if (G.timeLeft <= 0) { endGame(null); return; }
   }
 
-  // Energy regen
   const er = G.player.energyRegen * (dt / 1000);
   G.player.energy = Math.min(G.player.maxEnergy, G.player.energy + er);
 
@@ -1293,34 +1209,24 @@ function update(dt) {
   G.enemy.energy = Math.min(G.enemy.maxEnergy, G.enemy.energy + eer);
 
   updateEnergyHUD();
-
-  // AI
   updateAI(dt);
 
-  // Troops
   updateTroops(G.player.troops, G.enemy.troops, G.enemyTowers, 'player', dt);
   updateTroops(G.enemy.troops, G.player.troops, G.playerTowers, 'enemy', dt);
 
-  // Towers attack troops
   towerAttack(G.playerTowers, G.enemy.troops, dt);
   towerAttack(G.enemyTowers, G.player.troops, dt);
 
-  // Projectiles
   updateProjectiles(dt);
 
-  // Particles
   G.particles = G.particles.filter(p => { p.life -= dt; return p.life > 0; });
   G.particles.forEach(p => {
-    p.x += p.vx * dt/1000;
-    p.y += p.vy * dt/1000;
-    p.vy += 60 * dt/1000;
+    p.x += p.vx * dt/1000; p.y += p.vy * dt/1000; p.vy += 60 * dt/1000;
   });
 
-  // Float texts
   G.floatTexts = G.floatTexts.filter(f => { f.life -= dt; return f.life > 0; });
   G.floatTexts.forEach(f => { f.y -= 30 * dt/1000; });
 
-  // Check win
   const mainEnemy = G.enemyTowers.find(t => t.type==='main');
   const mainPlayer = G.playerTowers.find(t => t.type==='main');
   if (mainEnemy && !mainEnemy.alive) { endGame('player'); return; }
@@ -1339,14 +1245,12 @@ function updateAI(dt) {
   if (Math.random() > e.aiAgro) return;
   if (e.energy < 2) return;
 
-  // Pick affordable card
   const affordable = CARD_DEFS.filter(cd => cd.cost <= e.energy);
   if (affordable.length === 0) return;
 
   const cd = affordable[Math.floor(Math.random() * affordable.length)];
   e.energy -= cd.cost;
 
-  // Spawn on enemy side (top half), random x within lane
   const x = G.W * 0.25 + Math.random() * G.W * 0.5;
   const y = G.H * 0.25 + Math.random() * G.H * 0.1;
   spawnTroop(cd, x, y, 'enemy');
@@ -1363,7 +1267,6 @@ function spawnTroop(cd, x, y, side) {
     maxHp: cd.hp,
     target: null,
     attackTimer: 0,
-    attackRate: cd.special==='ssd' ? 400 : 900,
     dotTimer: 0,
     buffTimer: 0,
     alive: true,
@@ -1384,27 +1287,8 @@ function updateTroops(myTroops, enemyTroops, enemyTowers, side, dt) {
     if (!t.alive) { myTroops.splice(i, 1); continue; }
 
     if (t.shakeTimer > 0) t.shakeTimer -= dt;
-
-    // DOT
-    if (t.def.special === 'dot' && t.dotTimer <= 0) {
-      // Virus: apply DOT to nearby enemies (this troop itself does dot damage to enemies in range)
-    }
     if (t.buffTimer > 0) t.buffTimer -= dt;
 
-    // Static troops (firewall) dont move
-    if (t.def.special === 'static') {
-      // Only attack
-      t.attackTimer += dt;
-      const atRate = t.buffTimer > 0 ? t.def.attackRate * 0.6 : 900;
-      if (t.attackTimer >= atRate) {
-        t.attackTimer = 0;
-        const tgt = findNearest(t, enemyTroops, enemyTowers);
-        if (tgt) dealDamage(t, tgt, t.def.dmg, side);
-      }
-      continue;
-    }
-
-    // Find target
     const nearestTroop = findNearestAlive(t, enemyTroops, t.def.range * 1.2);
     const nearestTower = findNearestTowerAlive(t, enemyTowers, t.def.range * 1.5);
 
@@ -1412,21 +1296,18 @@ function updateTroops(myTroops, enemyTroops, enemyTowers, side, dt) {
     if (nearestTroop) {
       t.target = nearestTroop;
     } else {
-      // Move toward accessible tower
       const mainTower = enemyTowers.find(tw => tw.type==='main' && tw.alive);
       const secTowers = enemyTowers.filter(tw => tw.type==='secondary' && tw.alive);
       moveTarget = secTowers.length > 0 ? secTowers[Math.floor(Math.random()*secTowers.length)] : mainTower;
       t.target = moveTarget;
     }
 
-    // Move
     if (t.target) {
       const tx = t.target.x, ty = t.target.y;
       const dx = tx - t.x, dy = ty - t.y;
       const dist = Math.sqrt(dx*dx+dy*dy);
       const spd = t.def.speed * (t.buffTimer > 0 ? 1.4 : 1.0) * 60;
 
-      // Check if in range
       const engageRange = (t.target.r || 0) + t.def.range;
       if (dist > engageRange) {
         t.x += (dx/dist) * spd * dt/1000;
@@ -1434,22 +1315,18 @@ function updateTroops(myTroops, enemyTroops, enemyTowers, side, dt) {
         t.angle = Math.atan2(dy, dx);
       }
 
-      // Attack
       if (dist <= engageRange) {
-        const atRate = t.buffTimer > 0 ? 600 : 900;
+        const atRate = t.buffTimer > 0 ? 500 : 900;
         t.attackTimer += dt;
         if (t.attackTimer >= atRate) {
           t.attackTimer = 0;
           if (t.def.special === 'aoe') {
-            // GPU: AOE damage
             const targets = [...enemyTroops.filter(e=>e.alive), ...enemyTowers.filter(e=>e.alive)];
             targets.forEach(en => {
               const ddx=en.x-t.x, ddy=en.y-t.y;
               if(Math.sqrt(ddx*ddx+ddy*ddy) < 90) dealDamage(t, en, t.def.dmg, side);
             });
             spawnParticles(t.x, t.y, t.def.color, 12, 'aoe');
-          } else if (t.def.special === 'heal') {
-            healNearby(t, side);
           } else if (t.def.special === 'buff') {
             buffNearby(t, side);
           } else {
@@ -1458,24 +1335,7 @@ function updateTroops(myTroops, enemyTroops, enemyTowers, side, dt) {
         }
       }
     } else {
-      // Move toward enemy side
       t.y += dir * t.def.speed * 60 * dt/1000;
-    }
-
-    // DOT: Virus infects nearby enemies
-    if (t.def.special === 'dot') {
-      t.dotTimer -= dt;
-      if (t.dotTimer <= 0) {
-        t.dotTimer = 800;
-        const targets = [...enemyTroops.filter(e=>e.alive), ...enemyTowers.filter(e=>e.alive)];
-        targets.forEach(en => {
-          const ddx=en.x-t.x, ddy=en.y-t.y;
-          if(Math.sqrt(ddx*ddx+ddy*ddy) < 70) {
-            dealDamage(t, en, 6, side);
-            spawnParticles(en.x, en.y, '#69f0ae', 3, 'dot');
-          }
-        });
-      }
     }
   }
 }
@@ -1485,16 +1345,12 @@ function dealDamage(attacker, target, dmg, attackerSide) {
   if (!target.alive && target.alive !== undefined) return;
 
   let finalDmg = dmg;
-  // Hacker ignores 40% of effective defense (no real armor system, just flavor)
-  if (attacker && attacker.def.special === 'pierce') finalDmg = Math.ceil(dmg * 1.3);
-
   target.hp -= finalDmg;
   if (target.shakeTimer !== undefined) target.shakeTimer = 80;
 
   spawnParticles(target.x, target.y, '#ff006e', 4, 'hit');
   addFloatText(target.x, target.y, '-'+finalDmg, '#ff4444');
 
-  // Shoot visual projectile
   if (attacker) {
     G.projectiles.push({
       x: attacker.x, y: attacker.y,
@@ -1512,27 +1368,14 @@ function dealDamage(attacker, target, dmg, attackerSide) {
   }
 }
 
-function healNearby(source, side) {
-  const troops = side === 'player' ? G.player.troops : G.enemy.troops;
-  troops.forEach(t => {
-    if (!t.alive) return;
-    const dx=t.x-source.x, dy=t.y-source.y;
-    if (Math.sqrt(dx*dx+dy*dy) < 100) {
-      t.hp = Math.min(t.maxHp, t.hp + 18);
-      spawnParticles(t.x, t.y, '#ffea00', 4, 'heal');
-      addFloatText(t.x, t.y, '+18', '#39ff14');
-    }
-  });
-}
-
 function buffNearby(source, side) {
   const troops = side === 'player' ? G.player.troops : G.enemy.troops;
   troops.forEach(t => {
-    if (!t.alive) return;
+    if (!t.alive || t === source) return;
     const dx=t.x-source.x, dy=t.y-source.y;
     if (Math.sqrt(dx*dx+dy*dy) < 110) {
       t.buffTimer = 3000;
-      spawnParticles(t.x, t.y, '#80d8ff', 4, 'buff');
+      spawnParticles(t.x, t.y, '#ffea00', 4, 'buff');
     }
   });
 }
@@ -1548,6 +1391,7 @@ function findNearestAlive(from, troops, maxDist) {
   return best;
 }
 
+// ---------- TOWER ATTACK ----------
 function findNearestTowerAlive(from, towers, maxDist) {
   let best = null, bestD = maxDist;
   for (const t of towers) {
@@ -1559,18 +1403,6 @@ function findNearestTowerAlive(from, towers, maxDist) {
   return best;
 }
 
-function findNearest(from, enemyTroops, enemyTowers) {
-  let best = null, bestD = Infinity;
-  const all = [...enemyTroops.filter(t=>t.alive), ...enemyTowers.filter(t=>t.alive)];
-  for (const t of all) {
-    const dx=t.x-from.x, dy=t.y-from.y;
-    const d = Math.sqrt(dx*dx+dy*dy);
-    if (d < bestD) { bestD=d; best=t; }
-  }
-  return best;
-}
-
-// ---------- TOWER ATTACK ----------
 function towerAttack(towers, enemyTroops, dt) {
   towers.forEach(tw => {
     if (!tw.alive) return;
@@ -1634,7 +1466,6 @@ function tryPlayCard(cd) {
 }
 
 // ---------- QUESTION SYSTEM ----------
-let currentQuestion = null;
 let questionAnswered = false;
 
 function showQuestion(cd) {
@@ -1642,15 +1473,15 @@ function showQuestion(cd) {
   modal.classList.remove('hidden');
   questionAnswered = false;
 
-  // Draw card preview
   const cv = document.getElementById('qCardCanvas');
   const c = cv.getContext('2d');
   drawCardSprite(c, cd, 0, 0, 40, 40);
   document.getElementById('qCardName').textContent = cd.name;
   document.getElementById('qCardCost').textContent = cd.cost + ' EP';
 
-  // Pick random question
-  currentQuestion = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+  // Mudanca dinamica de perguntas baseado na carta clicada para atender a especificacao pedagógica
+  QUESTIONS = getQuestionsForCard(cd.id);
+  const currentQuestion = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
   document.getElementById('questionText').textContent = currentQuestion.q;
 
   const grid = document.getElementById('answersGrid');
@@ -1660,7 +1491,7 @@ function showQuestion(cd) {
     const btn = document.createElement('button');
     btn.className = 'answer-btn';
     btn.innerHTML = `<span class="answer-key">${keys[i]})</span>${opt}`;
-    btn.onclick = () => answerQuestion(i, btn);
+    btn.onclick = () => answerQuestion(i, btn, currentQuestion);
     grid.appendChild(btn);
   });
 
@@ -1668,7 +1499,7 @@ function showQuestion(cd) {
   document.getElementById('questionFeedback').className = 'question-feedback';
 }
 
-function answerQuestion(idx, btn) {
+function answerQuestion(idx, btn, currentQuestion) {
   if (questionAnswered) return;
   questionAnswered = true;
 
@@ -1687,11 +1518,9 @@ function answerQuestion(idx, btn) {
     p.correct++;
     saveProgress(p);
 
-    // Save card reference BEFORE closeQuestion nullifies G.pendingCard
     const cardToSpawn = G.pendingCard;
     setTimeout(() => {
       closeQuestion();
-      // Spawn troop in center-ish of player side
       const x = G.W * 0.35 + Math.random() * G.W * 0.3;
       const y = G.H * 0.6 + Math.random() * G.H * 0.1;
       G.player.energy -= cardToSpawn.cost;
@@ -1735,7 +1564,6 @@ function updateEnergyHUD() {
   document.getElementById('energyFill').style.width = pct + '%';
   document.getElementById('energyCount').textContent = Math.floor(e) + '/10';
 
-  // Update card availability
   CARD_DEFS.forEach(cd => {
     const el = document.getElementById('card_' + cd.id);
     if (el) el.className = 'card' + (e < cd.cost ? ' card-disabled' : '');
@@ -1774,7 +1602,6 @@ function endGame(winner) {
   let isVictory = false;
 
   if (winner === null) {
-    // Time up: compare damage
     const playerMain = G.enemyTowers.find(t=>t.type==='main');
     const enemyMain = G.playerTowers.find(t=>t.type==='main');
     const playerDmg = playerMain ? playerMain.maxHp - playerMain.hp : 0;
@@ -1825,7 +1652,6 @@ function render() {
 }
 
 function drawArena(W, H) {
-  // Background gradient
   const grad = ctx.createLinearGradient(0, 0, 0, H);
   grad.addColorStop(0, '#0a0515');
   grad.addColorStop(0.5, '#020818');
@@ -1833,7 +1659,6 @@ function drawArena(W, H) {
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
 
-  // Grid lines
   ctx.save();
   ctx.globalAlpha = 0.04;
   ctx.strokeStyle = '#00f5ff';
@@ -1842,7 +1667,6 @@ function drawArena(W, H) {
   for(let y=0; y<H; y+=40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
   ctx.restore();
 
-  // Center divider
   ctx.save();
   ctx.globalAlpha = 0.3;
   ctx.strokeStyle = '#00f5ff';
@@ -1851,7 +1675,6 @@ function drawArena(W, H) {
   ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke();
   ctx.setLineDash([]);
 
-  // Lane lines
   ctx.globalAlpha = 0.08;
   ctx.strokeStyle = '#00f5ff';
   ctx.lineWidth = 1;
@@ -1859,7 +1682,6 @@ function drawArena(W, H) {
   ctx.beginPath(); ctx.moveTo(W*0.7,0); ctx.lineTo(W*0.7,H); ctx.stroke();
   ctx.restore();
 
-  // Enemy zone tint
   ctx.save();
   ctx.globalAlpha = 0.03;
   ctx.fillStyle = '#ff006e';
@@ -1869,7 +1691,6 @@ function drawArena(W, H) {
   ctx.fillRect(0, H/2, W, H/2);
   ctx.restore();
 
-  // Labels
   ctx.save();
   ctx.font = `bold 10px Orbitron, monospace`;
   ctx.globalAlpha = 0.2;
@@ -1884,7 +1705,6 @@ function drawArena(W, H) {
 function drawTowers(towers, accentColor) {
   towers.forEach(tw => {
     if (!tw.alive) {
-      // Rubble
       ctx.save();
       ctx.globalAlpha = 0.3;
       ctx.fillStyle = '#444';
@@ -1897,18 +1717,15 @@ function drawTowers(towers, accentColor) {
     const col = tw.side === 'player' ? '#00f5ff' : '#ff006e';
     const hpPct = tw.hp / tw.maxHp;
 
-    // Shake
     let sx = 0, sy = 0;
     if (tw.shakeTimer > 0) { sx=(Math.random()-0.5)*4; sy=(Math.random()-0.5)*4; }
 
     ctx.save();
     ctx.translate(tw.x + sx, tw.y + sy);
 
-    // Glow
     ctx.shadowBlur = isMain ? 30 : 18;
     ctx.shadowColor = col;
 
-    // Body
     ctx.globalAlpha = 0.15 + (1-hpPct)*0.1;
     ctx.fillStyle = col;
     drawHexagon(ctx, 0, 0, tw.r);
@@ -1919,14 +1736,12 @@ function drawTowers(towers, accentColor) {
     drawHexagon(ctx, 0, 0, tw.r);
     ctx.stroke();
 
-    // Inner details
     ctx.strokeStyle = col;
     ctx.globalAlpha = 0.5;
     ctx.lineWidth = 1;
     drawHexagon(ctx, 0, 0, tw.r*0.7);
     ctx.stroke();
 
-    // Icon
     ctx.globalAlpha = 0.9;
     ctx.fillStyle = col;
     ctx.font = `bold ${isMain ? tw.r*0.7 : tw.r*0.6}px Orbitron, monospace`;
@@ -1934,7 +1749,6 @@ function drawTowers(towers, accentColor) {
     ctx.textBaseline = 'middle';
     ctx.fillText(isMain ? 'S' : 's', 0, 0);
 
-    // HP bar
     ctx.globalAlpha = 1;
     const bw = tw.r*2.2, bh = 5;
     const bx = -bw/2, by = tw.r + 5;
@@ -1976,25 +1790,20 @@ function drawTroops(troops) {
     ctx.save();
     ctx.translate(t.x + sx, t.y + sy);
 
-    // Buff glow
     if (t.buffTimer > 0) {
       ctx.shadowBlur = 20;
       ctx.shadowColor = '#80d8ff';
     }
 
-    // Body glow
     ctx.globalAlpha = 0.2;
     ctx.fillStyle = col;
     ctx.beginPath(); ctx.arc(0, 0, r+4, 0, Math.PI*2); ctx.fill();
 
-    // Draw sprite
     ctx.globalAlpha = 1;
     ctx.shadowBlur = 8; ctx.shadowColor = col;
 
-    // Mini sprite based on type
     drawTroopSprite(ctx, t, r);
 
-    // HP bar
     const bw = r*2.2, bh = 3;
     ctx.globalAlpha = 0.9;
     ctx.fillStyle = 'rgba(0,0,0,0.6)';
@@ -2002,28 +1811,16 @@ function drawTroops(troops) {
     ctx.fillStyle = hpPct > 0.5 ? '#39ff14' : hpPct > 0.25 ? '#ffea00' : '#ff006e';
     ctx.fillRect(-bw/2, r+3, bw*hpPct, bh);
 
-    // DOT indicator
-    if (cd.special === 'dot') {
-      ctx.globalAlpha = 0.8;
-      ctx.fillStyle = '#69f0ae';
-      ctx.font = '8px monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText('~', 0, r+12);
-    }
-
     ctx.restore();
   });
 }
 
 function drawTroopSprite(c, t, r) {
   const col = t.def.color;
-  const side = t.side;
 
   c.save();
-  // Rotate based on movement direction
   c.rotate(t.angle + Math.PI/2);
 
-  // Shadow/base circle
   c.fillStyle = col;
   c.globalAlpha = 0.25;
   c.beginPath(); c.arc(0, 0, r, 0, Math.PI*2); c.fill();
@@ -2039,8 +1836,7 @@ function drawTroopSprite(c, t, r) {
     case 'ram':
       c.fillStyle = col; c.globalAlpha = 0.9;
       c.fillRect(-r*0.9, -r*0.35, r*1.8, r*0.7);
-      c.globalAlpha = 0.5;
-      c.fillStyle = '#000';
+      c.globalAlpha = 0.5; c.fillStyle = '#000';
       for(let i=0;i<5;i++) c.fillRect(-r*0.7+i*r*0.36, -r*0.15, r*0.2, r*0.3);
       break;
     case 'ssd':
@@ -2048,7 +1844,7 @@ function drawTroopSprite(c, t, r) {
       c.fillRect(-r*0.7, -r*0.5, r*1.4, r);
       c.fillStyle = '#fff'; c.globalAlpha = 0.7;
       c.font = `bold ${r*0.8}px monospace`; c.textAlign='center'; c.textBaseline='middle';
-      c.fillText('F', 0, r*0.05);
+      c.fillText('S', 0, r*0.05);
       break;
     case 'hd':
       c.strokeStyle = col; c.lineWidth = 2; c.globalAlpha = 0.9;
@@ -2061,48 +1857,16 @@ function drawTroopSprite(c, t, r) {
       c.globalAlpha = 0.5; c.fillStyle='#000';
       c.beginPath(); c.arc(-r*0.3, 0, r*0.3, 0, Math.PI*2); c.fill();
       break;
-    case 'fonte':
-      c.strokeStyle = col; c.lineWidth = 2; c.globalAlpha = 0.9;
-      c.strokeRect(-r*0.65, -r*0.65, r*1.3, r*1.3);
-      c.beginPath();
-      c.arc(0, r*0.05, r*0.38, Math.PI*0.2, Math.PI*1.8, false);
-      c.stroke();
-      c.beginPath(); c.moveTo(0, -r*0.45); c.lineTo(0, r*0.05); c.lineWidth=2.5; c.stroke();
-      break;
-    case 'cooler':
-      c.strokeStyle = col; c.lineWidth = 1.5; c.globalAlpha = 0.9;
-      c.beginPath(); c.arc(0,0,r*0.72,0,Math.PI*2); c.stroke();
-      for(let i=0;i<4;i++) {
-        const a = i*Math.PI/2;
-        c.beginPath(); c.moveTo(0,0); c.lineTo(Math.cos(a)*r*0.7, Math.sin(a)*r*0.7); c.stroke();
-      }
-      c.fillStyle=col; c.beginPath(); c.arc(0,0,r*0.2,0,Math.PI*2); c.fill();
-      break;
-    case 'firewall':
+    case 'bios':
       c.strokeStyle = col; c.lineWidth = 2; c.globalAlpha = 0.9;
       c.beginPath();
       c.moveTo(0, -r); c.lineTo(r*0.7,-r*0.3); c.lineTo(r*0.7,r*0.25);
       c.lineTo(0,r); c.lineTo(-r*0.7,r*0.25); c.lineTo(-r*0.7,-r*0.3); c.closePath(); c.stroke();
-      c.fillStyle=col; c.globalAlpha=0.15; c.fill();
-      c.globalAlpha=0.9; c.fillStyle=col; c.font=`bold ${r*0.7}px Orbitron,monospace`; c.textAlign='center'; c.textBaseline='middle'; c.fillText('F',0,r*0.05);
       break;
-    case 'hacker':
-      c.strokeStyle = col; c.lineWidth = 1.5; c.globalAlpha = 0.9;
-      c.beginPath(); c.arc(0,-r*0.25,r*0.45,0,Math.PI*2); c.stroke();
-      c.beginPath();
-      c.moveTo(-r*0.4,r*0.1); c.quadraticCurveTo(-r*0.55,r*0.8,-r*0.2,r); c.lineTo(r*0.2,r);
-      c.quadraticCurveTo(r*0.55,r*0.8,r*0.4,r*0.1); c.closePath(); c.stroke();
-      break;
-    case 'virus':
-      c.strokeStyle = col; c.lineWidth = 1.5; c.globalAlpha = 0.9;
-      c.beginPath(); c.arc(0,0,r*0.5,0,Math.PI*2); c.stroke();
-      for(let i=0;i<6;i++) {
-        const a=i*Math.PI/3;
-        c.beginPath(); c.moveTo(Math.cos(a)*r*0.5,Math.sin(a)*r*0.5);
-        c.lineTo(Math.cos(a)*r*0.85,Math.sin(a)*r*0.85); c.stroke();
-        c.beginPath(); c.arc(Math.cos(a)*r*0.85,Math.sin(a)*r*0.85,r*0.1,0,Math.PI*2);
-        c.fillStyle=col; c.fill();
-      }
+    case 'barramento':
+      c.strokeStyle = col; c.lineWidth = 3;
+      c.beginPath(); c.moveTo(-r, -r*0.2); c.lineTo(r, -r*0.2); c.stroke();
+      c.beginPath(); c.moveTo(-r, r*0.2); c.lineTo(r, r*0.2); c.stroke();
       break;
   }
   c.restore();
@@ -2110,63 +1874,40 @@ function drawTroopSprite(c, t, r) {
 
 function drawProjectiles() {
   G.projectiles.forEach(p => {
-    const alpha = p.life / p.maxLife;
-    const progress = 1 - alpha;
-    const x = p.x + (p.tx - p.x) * progress;
-    const y = p.y + (p.ty - p.y) * progress;
-
     ctx.save();
-    ctx.globalAlpha = alpha * 0.9;
-    ctx.shadowBlur = 6; ctx.shadowColor = p.color;
-    ctx.fillStyle = p.color;
-    ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI*2); ctx.fill();
-
-    // Trail
-    ctx.globalAlpha = alpha * 0.3;
-    ctx.fillStyle = p.color;
-    ctx.beginPath(); ctx.arc(x - (p.tx-p.x)*0.08, y - (p.ty-p.y)*0.08, 2, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = p.color;
+    ctx.lineWidth = 2;
+    const pct = 1 - (p.life / p.maxLife);
+    const curX = p.x + (p.tx - p.x) * pct;
+    const curY = p.y + (p.ty - p.y) * pct;
+    ctx.beginPath();
+    ctx.arc(curX, curY, 3, 0, Math.PI*2);
+    ctx.stroke();
     ctx.restore();
   });
 }
 
 function drawParticles() {
   G.particles.forEach(p => {
-    const alpha = (p.life / p.maxLife) * 0.9;
     ctx.save();
-    ctx.globalAlpha = alpha;
     ctx.fillStyle = p.color;
-    ctx.shadowBlur = 4; ctx.shadowColor = p.color;
-    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+    ctx.globalAlpha = p.life / p.maxLife;
+    ctx.fillRect(p.x, p.y, p.size, p.size);
     ctx.restore();
   });
 }
 
 function drawFloatTexts() {
   G.floatTexts.forEach(f => {
-    const alpha = f.life / f.maxLife;
     ctx.save();
-    ctx.globalAlpha = alpha;
+    ctx.font = 'bold 12px Orbitron, monospace';
     ctx.fillStyle = f.color;
-    ctx.shadowBlur = 6; ctx.shadowColor = f.color;
-    ctx.font = `bold 11px Orbitron, monospace`;
+    ctx.globalAlpha = f.life / f.maxLife;
     ctx.textAlign = 'center';
     ctx.fillText(f.text, f.x, f.y);
     ctx.restore();
   });
 }
-
-// ---------- WINDOW RESIZE ----------
-window.addEventListener('resize', () => {
-  if (G && G.running) {
-    resizeCanvas();
-    G.W = canvas.width;
-    G.H = canvas.height;
-    buildTowers();
-  }
-});
-
-// ---------- INIT ----------
-showScreen('menuScreen');
 </script>
 </body>
 </html>
